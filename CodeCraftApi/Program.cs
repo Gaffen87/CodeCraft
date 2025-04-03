@@ -1,5 +1,8 @@
-using FastEndpoints;
-using FastEndpoints.Swagger;
+global using FastEndpoints;
+global using FastEndpoints.Swagger;
+using CodeCraftApi.Database;
+using CodeCraftApi.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 namespace CodeCraftApi
@@ -11,11 +14,22 @@ namespace CodeCraftApi
 			var builder = WebApplication.CreateBuilder(args);
 
 			builder.Services.AddFastEndpoints()
-				.SwaggerDocument();
+				.SwaggerDocument(o => o.ShortSchemaNames = true);
+
+			builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
+				o =>
+				{
+					o.MapEnum<ExerciseDifficulty>();
+					o.MapEnum<Role>();
+					o.MapEnum<Status>("status");
+					o.MapEnum<SessionStatus>();
+					o.MapEnum<GroupSize>();
+				}));
 
 			var app = builder.Build();
 
-			app.UseFastEndpoints();
+			app.UseFastEndpoints()
+				.UseSwaggerGen();
 
 			if (app.Environment.IsDevelopment())
 			{

@@ -11,6 +11,7 @@ public class User
 	public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.Now;
 	public bool IsDeleted { get; set; }
 
+	public List<Group> Groups { get; set; }
 	public List<Session> Sessions { get; set; } = [];
 }
 
