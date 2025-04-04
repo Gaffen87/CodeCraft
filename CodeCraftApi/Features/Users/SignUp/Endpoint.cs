@@ -1,6 +1,4 @@
-﻿using FastEndpoints;
-
-namespace CodeCraftApi.Features.Users.SignUp;
+﻿namespace CodeCraftApi.Features.Users.SignUp;
 
 internal sealed class Endpoint : Endpoint<SignUpRequest, SignUpResponse, Mapper>
 {
@@ -11,6 +9,7 @@ internal sealed class Endpoint : Endpoint<SignUpRequest, SignUpResponse, Mapper>
 
 	public override async Task HandleAsync(SignUpRequest r, CancellationToken c)
 	{
+
 		await SendAsync(new SignUpResponse());
 	}
 }

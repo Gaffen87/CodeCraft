@@ -2,7 +2,7 @@
 
 namespace CodeCraftApi.Features.Exercises.CreateExercise;
 
-internal sealed class EndpointWithMapping(AppDbContext context) : Endpoint<CreateExerciseRequest, Response, Mapper>
+internal sealed class EndpointWithMapping(AppDbContext context) : Endpoint<CreateExerciseRequest, CreateExerciseResponse, Mapper>
 {
 	public override void Configure()
 	{
@@ -15,6 +15,8 @@ internal sealed class EndpointWithMapping(AppDbContext context) : Endpoint<Creat
 	{
 		var exercise = Map.ToEntity(r);
 
-		await SendAsync(new Response() { Message = "Success" });
+		var createdExercise = await Data.CreateExerciseAsync(context, exercise);
+
+		await SendAsync(Map.FromEntity(createdExercise));
 	}
 }

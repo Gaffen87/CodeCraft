@@ -29,6 +29,17 @@ internal sealed class CreateExerciseRequest
 	}
 }
 
+internal sealed class CreateExerciseResponse
+{
+	public Guid Id { get; set; }
+	public string Title { get; set; }
+	public string Summary { get; set; }
+	public ExerciseDifficulty ExerciseDifficulty { get; set; }
+	public List<ExerciseItemResponse> SubExercises { get; set; }
+	public List<Guid> Categories { get; set; }
+	public List<Guid> Groups { get; set; }
+}
+
 internal sealed class CreateExerciseItem()
 {
 	public int Number { get; set; }
@@ -45,8 +56,21 @@ internal sealed class CreateExerciseStep()
 	public string Hints { get; set; }
 }
 
-
-internal sealed class Response
+internal sealed class ExerciseItemResponse()
 {
-	public string Message;
+	public Guid Id { get; set; }
+	public int Number { get; set; }
+	public string Title { get; set; }
+	public List<ExerciseStepResponse> Steps { get; set; }
+}
+
+internal sealed class ExerciseStepResponse()
+{
+	public Guid Id { get; set; }
+	public string Title { get; set; }
+	public string Description { get; set; }
+	public string DescriptionShort { get; set; }
+	public string Contraints { get; set; }
+	public string Hints { get; set; }
+	public List<Test> Tests { get; set; }
 }
