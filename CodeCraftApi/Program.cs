@@ -2,6 +2,7 @@ global using FastEndpoints;
 global using FastEndpoints.Swagger;
 using CodeCraftApi.Database;
 using CodeCraftApi.Domain.Entities;
+using FastEndpoints.Security;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -13,7 +14,10 @@ namespace CodeCraftApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			builder.Services.AddFastEndpoints()
+			builder.Services
+				.AddAuthenticationJwtBearer(s => s.SigningKey = "EgliLoHLLxgdxLBuUH9thsIhkKjA4ieaUm0THxZA4a2yySKW2pYKNbl9mGpHkm1u7KE1UtHmmmtQQdwgPWBRjw==")
+				.AddAuthorization()
+				.AddFastEndpoints()
 				.SwaggerDocument(o => o.ShortSchemaNames = true);
 
 			builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -28,7 +32,9 @@ namespace CodeCraftApi
 
 			var app = builder.Build();
 
-			app.UseFastEndpoints()
+			app.UseAuthentication()
+				.UseAuthorization()
+				.UseFastEndpoints(c => c.Security.RoleClaimType = "user_role")
 				.UseSwaggerGen();
 
 			if (app.Environment.IsDevelopment())

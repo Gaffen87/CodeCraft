@@ -1,4 +1,5 @@
 ﻿using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.Features.Exercises.Shared;
 
 namespace CodeCraftApi.Features.Exercises.CreateExercise;
 

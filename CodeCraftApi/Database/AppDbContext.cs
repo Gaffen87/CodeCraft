@@ -17,12 +17,14 @@ public class AppDbContext : DbContext
 	{
 		modelBuilder.Entity<Domain.Entities.Group>().HasMany(e => e.Exercises).WithMany(g => g.Groups)
 			.UsingEntity<GroupExercise>();
+
+		modelBuilder.Entity<Test>().Property(x => x.Content).HasColumnType("jsonb");
 	}
 
-	public DbSet<Exercise> Exercises { get; set; }
-	public DbSet<Domain.Entities.Group> Groups { get; set; }
-	public DbSet<Category> Categories { get; set; }
-	public DbSet<Session> Sessions { get; set; }
-	public DbSet<Test> Tests { get; set; }
-	public DbSet<User> Users { get; set; }
+	public virtual DbSet<Exercise> Exercises { get; set; }
+	public virtual DbSet<Domain.Entities.Group> Groups { get; set; }
+	public virtual DbSet<Category> Categories { get; set; }
+	public virtual DbSet<Session> Sessions { get; set; }
+	public virtual DbSet<Test> Tests { get; set; }
+	public virtual DbSet<User> Users { get; set; }
 }
