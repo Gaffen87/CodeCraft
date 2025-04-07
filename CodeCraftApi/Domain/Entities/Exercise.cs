@@ -1,5 +1,8 @@
 ﻿namespace CodeCraftApi.Domain.Entities;
 
+using System.ComponentModel;
+using System.Runtime.Serialization;
+
 public class Exercise
 {
 	public Guid Id { get; set; }
@@ -17,8 +20,12 @@ public class Exercise
 
 public enum ExerciseDifficulty
 {
+	[EnumMember(Value = "Unassigned")]
 	Unassigned,
+	[EnumMember(Value = "Easy")]
 	Easy,
+	[EnumMember(Value = "Medium")]
 	Medium,
+	[EnumMember(Value = "Hard")]
 	Hard
 }
