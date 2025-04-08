@@ -1,22 +1,43 @@
-import type { Route, route } from "./+types/signup";
-import { Form } from "react-router";
-import supabase from "../lib/supabase";
-
-export async function clientAction({ request }: Route.ClientActionArgs) {
-	let formData = await request.formData();
-	let name = formData.get("full-name");
-	let email = formData.get("email") as string;
-	let password = formData.get("password") as string;
-	await supabase.auth.signUp({
-		email,
-		password,
-		options: { data: { user_name: name, role: "student" } },
-	});
-}
+import type { Route } from "./+types/signup";
+import supabase from "../../../lib/supabase";
+import useUserStore from "~/stores/userstore";
+import { useNavigate } from "react-router";
 
 export default function SignUp() {
+	const setUser = useUserStore((state) => state.setUser);
+	const navigate = useNavigate();
+
+	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
+		const formData = new FormData(event.currentTarget);
+		const email = formData.get("email") as string;
+		const password = formData.get("password") as string;
+		const fullName = formData.get("full-name") as string;
+
+		const { data, error } = await supabase.auth.signUp({
+			email,
+			password,
+			options: {
+				data: {
+					user_name: fullName,
+					role: "student",
+				},
+			},
+		});
+
+		if (error) {
+			console.error("Error signing up:", error.message);
+			return;
+		}
+
+		if (data.user) {
+			setUser(data.user);
+			navigate("/");
+		}
+	};
+
 	return (
-		<Form method="post">
+		<form onSubmit={handleSubmit}>
 			<h2 className="text-white text-lg font-medium title-font mb-5 text-center">
 				Sign Up
 			</h2>
@@ -62,6 +83,6 @@ export default function SignUp() {
 					Log In
 				</a>
 			</p>
-		</Form>
+		</form>
 	);
 }
