@@ -1,12 +1,7 @@
 import supabase from "~/lib/supabase";
-import { useEffect } from "react";
-import type { Route } from "./+types/login";
-import useUserStore from "~/stores/userstore";
 import { useNavigate } from "react-router";
 
 export default function Login() {
-	const user = useUserStore((state) => state.user);
-	const setUser = useUserStore((state) => state.setUser);
 	const navigate = useNavigate();
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -25,14 +20,12 @@ export default function Login() {
 			return;
 		}
 		if (data.user) {
-			setUser(data.user);
 			navigate("/");
 		}
 	};
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<h1>{user?.user_metadata.user_name}</h1>
 			<h2 className="text-white text-lg font-medium title-font mb-5 text-center">
 				Log in
 			</h2>

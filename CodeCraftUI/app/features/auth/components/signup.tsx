@@ -1,10 +1,7 @@
-import type { Route } from "./+types/signup";
 import supabase from "../../../lib/supabase";
-import useUserStore from "~/stores/userstore";
 import { useNavigate } from "react-router";
 
 export default function SignUp() {
-	const setUser = useUserStore((state) => state.setUser);
 	const navigate = useNavigate();
 
 	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,7 +28,6 @@ export default function SignUp() {
 		}
 
 		if (data.user) {
-			setUser(data.user);
 			navigate("/");
 		}
 	};

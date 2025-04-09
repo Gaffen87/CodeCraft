@@ -1,36 +1,22 @@
-import useUserStore from "~/stores/userstore";
 import StudentDashboard from "./components/student-dashboard";
 import TeacherDashboard from "./components/teacher-dashboard";
-import { useNavigate } from "react-router";
-import { useEffect } from "react";
-import supabase from "~/lib/supabase";
+import useAuth from "~/hooks/useAuth";
 
-export default function DashboardLayout() {
-	const user = useUserStore((state) => state.user);
-	const clearUser = useUserStore((state) => state.clearUser);
-	const navigate = useNavigate();
-
-	useEffect(() => {
-		if (!user) {
-			navigate("/login");
-		}
-	}, [user, navigate]);
+export default function DashboardIndex() {
+	const { user, signOut } = useAuth();
 
 	return (
 		<div className="w-full h-dvh flex flex-col items-center justify-center">
 			{user?.user_metadata.role === "student" ? (
-				<StudentDashboard user={user} />
+				<StudentDashboard />
 			) : (
 				<TeacherDashboard />
 			)}
 			<button
-				className="bg-blue-950 px-4 py-2 mt-4 hover:cursor-pointer rounded-lg active:bg-blue-800"
-				onClick={async () => {
-					await supabase.auth.signOut();
-					clearUser();
-				}}
+				className="px-8 py-2 mt-6 bg-gray-900 outline-white outline-2 hover:bg-gray-800 hover:cursor-pointer rounded-lg active:opacity-90"
+				onClick={() => signOut()}
 			>
-				Log ud
+				Log out
 			</button>
 		</div>
 	);
