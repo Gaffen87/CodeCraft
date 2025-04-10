@@ -3,7 +3,7 @@ import TeacherDashboard from "./components/teacher-dashboard";
 import useAuth from "~/hooks/useAuth";
 
 export default function Dashboard() {
-	const { user, signOut } = useAuth();
+	const { user } = useAuth();
 
 	return (
 		<div className="w-full h-full flex flex-col items-center justify-center">
