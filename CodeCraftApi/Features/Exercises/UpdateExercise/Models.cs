@@ -10,8 +10,6 @@ internal sealed class UpdateExerciseRequest
 	public string Summary { get; set; }
 	public ExerciseDifficulty ExerciseDifficulty { get; set; }
 	public List<UpdateExerciseItem> SubExercises { get; set; }
-	public List<Guid> Categories { get; set; }
-	public List<Guid> Groups { get; set; }
 
 	internal sealed class Validator : Validator<UpdateExerciseRequest>
 	{
@@ -35,9 +33,14 @@ internal sealed class UpdateExerciseRequest
 	}
 }
 
-internal sealed class UpdateExerciseItem()
+internal sealed class UpdateExerciseItem
 {
-	public Guid ExerciseItemId { get; set; }
+	public UpdateExerciseItem()
+	{
+		if (Id == null) Id = Guid.NewGuid();
+	}
+
+	public Guid? Id { get; set; }
 	public int Number { get; set; }
 	public string Title { get; set; }
 	public List<UpdateExerciseStep> Steps { get; set; }
@@ -46,8 +49,6 @@ internal sealed class UpdateExerciseItem()
 	{
 		public Validator()
 		{
-			RuleFor(x => x.ExerciseItemId).NotEmpty();
-
 			RuleFor(x => x.Number)
 				.NotEmpty();
 
@@ -59,9 +60,13 @@ internal sealed class UpdateExerciseItem()
 	}
 }
 
-internal sealed class UpdateExerciseStep()
+internal sealed class UpdateExerciseStep
 {
-	public Guid ExerciseStepId { get; set; }
+	public UpdateExerciseStep()
+	{
+		if (Id == null) Id = Guid.NewGuid();
+	}
+	public Guid? Id { get; set; }
 	public string Title { get; set; }
 	public string Description { get; set; }
 	public string DescriptionShort { get; set; }
@@ -73,8 +78,6 @@ internal sealed class UpdateExerciseStep()
 	{
 		public Validator()
 		{
-			RuleFor(x => x.ExerciseStepId).NotEmpty();
-
 			RuleFor(x => x.Title).NotEmpty();
 			RuleFor(x => x.Description).NotEmpty();
 			RuleFor(x => x.DescriptionShort).NotEmpty();
@@ -88,16 +91,21 @@ internal sealed class UpdateExerciseStep()
 }
 
 
-internal sealed class UpdateTestItem()
+internal sealed class UpdateTestItem
 {
-	public Guid TestId { get; set; }
+	public UpdateTestItem()
+	{
+		if (Id == null) Id = Guid.NewGuid();
+	}
+
+	public Guid? Id { get; set; }
 	public string Content { get; set; }
 
 	internal sealed class Validator : Validator<UpdateTestItem>
 	{
 		public Validator()
 		{
-			RuleFor(x => x.TestId).NotEmpty();
+			RuleFor(x => x.Id).NotEmpty();
 
 			RuleFor(x => x.Content).NotEmpty();
 		}
@@ -106,5 +114,5 @@ internal sealed class UpdateTestItem()
 
 internal sealed class Response
 {
-	public string Message => "This endpoint hasn't been implemented yet!";
+	public string Message => "Updated succesfully";
 }

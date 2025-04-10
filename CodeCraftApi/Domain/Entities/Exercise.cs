@@ -1,6 +1,5 @@
 ﻿namespace CodeCraftApi.Domain.Entities;
 
-using System.ComponentModel;
 using System.Runtime.Serialization;
 
 public class Exercise

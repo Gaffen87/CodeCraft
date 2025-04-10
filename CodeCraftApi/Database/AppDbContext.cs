@@ -22,6 +22,8 @@ public class AppDbContext : DbContext
 	}
 
 	public virtual DbSet<Exercise> Exercises { get; set; }
+	public virtual DbSet<ExerciseItem> ExerciseItem { get; set; }
+	public virtual DbSet<ExerciseStep> ExerciseStep { get; set; }
 	public virtual DbSet<Domain.Entities.Group> Groups { get; set; }
 	public virtual DbSet<Category> Categories { get; set; }
 	public virtual DbSet<Session> Sessions { get; set; }
