@@ -10,6 +10,7 @@ import {
 import type { Route } from "./+types/root";
 import "./app.css";
 import AuthProvider from "./contexts/authContext";
+import { ThemeProvider } from "./contexts/themeContext";
 
 // export function HydrateFallback() {
 // 	return <h1>Loading...</h1>;
@@ -49,7 +50,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
 	return (
 		<AuthProvider>
-			<Outlet />
+			<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+				<Outlet />
+			</ThemeProvider>
 		</AuthProvider>
 	);
 }

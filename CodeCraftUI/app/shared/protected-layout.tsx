@@ -6,7 +6,7 @@ export default function DashboardLayout() {
 	const { user } = useAuth();
 
 	if (!user) {
-		return <Navigate to="/login" replace />;
+		return <Navigate to="/auth" replace />;
 	}
 
 	return (

@@ -1,5 +1,8 @@
 import supabase from "~/lib/supabase";
 import { useNavigate } from "react-router";
+import { Input } from "~/components/ui/input";
+import { Button } from "~/components/ui/button";
+import { Label } from "~/components/ui/label";
 
 export default function Login() {
 	const navigate = useNavigate();
@@ -26,43 +29,17 @@ export default function Login() {
 
 	return (
 		<form onSubmit={handleSubmit}>
-			<h2 className="text-white text-lg font-medium title-font mb-5 text-center">
-				Log in
-			</h2>
-			<div className="relative mb-4">
-				<label htmlFor="email" className="leading-7 text-sm text-gray-400">
-					Email
-				</label>
-				<input
-					type="email"
-					id="email"
-					name="email"
-					className="w-full bg-gray-600 bg-opacity-20 focus:bg-transparent focus:ring-2 focus:ring-indigo-900 rounded border border-gray-600 focus:border-indigo-500 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-				/>
+			<div className="mb-4 space-y-1">
+				<Label htmlFor="email">Email</Label>
+				<Input type="email" id="email" name="email" />
 			</div>
-			<div className="relative mb-4">
-				<label htmlFor="password" className="leading-7 text-sm text-gray-400">
-					Password
-				</label>
-				<input
-					type="password"
-					id="password"
-					name="password"
-					className="w-full bg-gray-600 bg-opacity-20 focus:bg-transparent focus:ring-2 focus:ring-indigo-900 rounded border border-gray-600 focus:border-indigo-500 text-base outline-none text-gray-100 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-				/>
+			<div className="mb-4 space-y-1">
+				<Label htmlFor="password">Password</Label>
+				<Input type="password" id="password" name="password" />
 			</div>
-			<button
-				type="submit"
-				className="text-white bg-indigo-500 border-0 py-2 px-8 active:bg-indigo-700 focus:outline-none hover:bg-indigo-600 hover:cursor-pointer rounded text-lg"
-			>
+			<Button className="mt-4" type="submit">
 				Log In
-			</button>
-			<p className="text-xs mt-3">
-				No account yet?{" "}
-				<a href="/signup" className="text-indigo-400 hover:text-indigo-600">
-					Sign up here
-				</a>
-			</p>
+			</Button>
 		</form>
 	);
 }

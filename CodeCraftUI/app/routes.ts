@@ -16,9 +16,6 @@ export default [
 			]),
 		]),
 	]),
-
-	layout("./features/auth/layout.tsx", [
-		route("/signup", "./features/auth/components/signup.tsx"),
-		route("/login", "./features/auth/components/login.tsx"),
-	]),
+	...prefix("/auth", [
+	index("./features/auth/layout.tsx")]),
 ] satisfies RouteConfig;
