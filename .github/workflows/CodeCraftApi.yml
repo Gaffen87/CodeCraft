@@ -1,10 +1,10 @@
-name: Build and deploy .NET Core application to Web App signalrapihop
+name: Build and deploy .NET Core application to Web App CodeCraftApi
 on:
   push:
     branches:
     - development
 env:
-  AZURE_WEBAPP_NAME: signalrapihop
+  AZURE_WEBAPP_NAME: CodeCraftApi
   AZURE_WEBAPP_PACKAGE_PATH: CodeCraftApi\publish
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 9.0.x
@@ -43,7 +43,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v2
       with:
-        creds: ${{ secrets.signalrapihop_SPN }}
+        creds: ${{ secrets.CodeCraftApi_SPN }}
     - name: Deploy to Azure WebApp
       uses: azure/webapps-deploy@v2
       with:
