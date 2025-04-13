@@ -16,6 +16,6 @@ export default [
 			]),
 		]),
 	]),
-	...prefix("/auth", [
-	index("./features/auth/layout.tsx")]),
+	...prefix("/auth", [index("./features/auth/layout.tsx")]),
+	...prefix("/groups", [index("./features/groups/test.tsx")]),
 ] satisfies RouteConfig;
