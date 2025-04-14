@@ -17,6 +17,8 @@ namespace CodeCraftApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
+			builder.Logging.AddApplicationInsights().AddAzureWebAppDiagnostics();
+
 			builder.Services.AddSignalR()
 				.AddNewtonsoftJsonProtocol();
 
@@ -64,38 +66,29 @@ namespace CodeCraftApi
 
 			var app = builder.Build();
 
-			try
+
+			app.UseCors();
+
+			app.UseAuthentication()
+				.UseAuthorization()
+				.UseFastEndpoints(c => c.Security.RoleClaimType = "user_role")
+				.UseSwaggerGen();
+
+			if (app.Environment.IsDevelopment())
 			{
-				app.UseCors();
-
-				app.UseAuthentication()
-					.UseAuthorization()
-					.UseFastEndpoints(c => c.Security.RoleClaimType = "user_role")
-					.UseSwaggerGen();
-
-				if (app.Environment.IsDevelopment())
+				//scalar by default looks for the swagger json file here: 
+				app.UseOpenApi(c => c.Path = "/openapi/{documentName}.json");
+				app.MapScalarApiReference(x =>
 				{
-					//scalar by default looks for the swagger json file here: 
-					app.UseOpenApi(c => c.Path = "/openapi/{documentName}.json");
-					app.MapScalarApiReference(x =>
-					{
-						x.Title = "CodeCraft";
-						x.Layout = ScalarLayout.Modern;
-						x.Theme = ScalarTheme.DeepSpace;
-					});
-				}
-
-				app.MapHub<GroupHub>("/hubs/groups");
-				app.Run();
-			}
-			catch (Exception ex)
-			{
-				var logger = app.Services.GetRequiredService<ILogger<Program>>();
-				logger.LogError(ex, "An error occurred during application startup");
+					x.Title = "CodeCraft";
+					x.Layout = ScalarLayout.Modern;
+					x.Theme = ScalarTheme.DeepSpace;
+				});
 			}
 
+			app.MapHub<GroupHub>("/hubs/groups");
 
-
+			app.Run();
 		}
 	}
 }
