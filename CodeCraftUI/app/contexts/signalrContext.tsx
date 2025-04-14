@@ -1,6 +1,8 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { createContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
+import { useMessageStore } from "~/stores/messageStore";
+import type { Message } from "~/types/types";
 
 interface SignalRContextType {
 	connection: HubConnection | null;
@@ -19,6 +21,7 @@ export default function SignalRProvider({
 }) {
 	const [connection, setConnection] = useState<HubConnection | null>(null);
 	const [isConnected, setIsConnected] = useState(false);
+	const { addMessage } = useMessageStore();
 	const { session } = useAuth();
 
 	useEffect(() => {
@@ -41,7 +44,8 @@ export default function SignalRProvider({
 				setIsConnected(false);
 			});
 
-		newConnection.on("ReceiveMessage", (message: string) => {
+		newConnection.on("ReceiveMessage", (message: Message) => {
+			addMessage(message);
 			console.log("Received message:", message);
 		});
 

@@ -17,7 +17,9 @@ namespace CodeCraftApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
-			builder.Services.AddSignalR();
+			builder.Services.AddSignalR()
+				.AddNewtonsoftJsonProtocol();
+
 			builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
 			builder.Services.AddCors(

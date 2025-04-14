@@ -1,9 +1,6 @@
 import { create } from "zustand";
-
-interface Message {
-	from: string;
-	content: string;
-}
+import { persist } from "zustand/middleware";
+import type { Message } from "~/types/types";
 
 interface MessageState {
 	messages: Message[];
@@ -11,8 +8,14 @@ interface MessageState {
 	clearMessages: () => void;
 }
 
-export const useMessageStore = create<MessageState>((set) => ({
-	messages: [],
-	addMessage: (msg) => set((state) => ({ messages: [...state.messages, msg] })),
-	clearMessages: () => set({ messages: [] }),
-}));
+export const useMessageStore = create<MessageState>()(
+	persist(
+		(set) => ({
+			messages: [],
+			addMessage: (msg) =>
+				set((state) => ({ messages: [...state.messages, msg] })),
+			clearMessages: () => set({ messages: [] }),
+		}),
+		{ name: "message-store" }
+	)
+);

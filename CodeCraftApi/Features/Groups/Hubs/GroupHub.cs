@@ -1,23 +1,36 @@
-﻿using CodeCraftApi.Features.Groups.Hubs.Models;
+﻿using CodeCraftApi.Database;
+using CodeCraftApi.Features.Groups.Hubs.Models;
 using Microsoft.AspNetCore.SignalR;
-using System.Text.Json;
 
 namespace CodeCraftApi.Features.Groups.Hubs;
 
+public record HubResponse(string Type, AddToGroupResponse Content);
+
 public interface IGroupHub
 {
-	Task ReceiveMessage(string message);
+	Task ReceiveMessage(HubResponse response);
 }
 
-public class GroupHub : Hub<IGroupHub>
+internal sealed class GroupHub(AppDbContext context) : Hub<IGroupHub>
 {
 	public async Task AddToGroup(string groupName)
 	{
-		HubRequestToken userClaims = DeserializeToken();
-
 		await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-		await Clients.Group(groupName).ReceiveMessage($"{userClaims.UserName} added to group {groupName}");
+		if (await Data.GroupExists(context, groupName) == false)
+		{
+			await Data.CreateNewGroup(context, groupName);
+		}
+
+		var members = await Data.AddUserToGroup(context, groupName, Context.UserIdentifier!);
+
+		AddToGroupResponse content = new()
+		{
+			GroupName = groupName,
+			Members = members
+		};
+
+		await Clients.All.ReceiveMessage(new HubResponse("group", content));
 	}
 
 	public async Task RemoveFromGroup(string groupName)
@@ -25,16 +38,12 @@ public class GroupHub : Hub<IGroupHub>
 		HubRequestToken userClaims = DeserializeToken();
 
 		await Groups.RemoveFromGroupAsync(Context.ConnectionId, groupName);
-
-		await Clients.Group(groupName).ReceiveMessage($"{userClaims.UserName} removed from group {groupName}");
-
-		await Clients.User(Context.UserIdentifier).ReceiveMessage($"You have been removed from group {groupName}");
 	}
 
 	private HubRequestToken DeserializeToken()
 	{
 		var claims = Context.User!.FindFirst("user_metadata")!.Value;
-		var metadata = JsonSerializer.Deserialize<HubRequestToken>(claims);
+		var metadata = System.Text.Json.JsonSerializer.Deserialize<HubRequestToken>(claims);
 
 		return metadata!;
 	}

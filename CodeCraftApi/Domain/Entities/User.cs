@@ -1,4 +1,6 @@
-﻿namespace CodeCraftApi.Domain.Entities;
+﻿using Newtonsoft.Json;
+
+namespace CodeCraftApi.Domain.Entities;
 
 public class User
 {
@@ -7,7 +9,7 @@ public class User
 	public Status Status { get; set; }
 	public string UserName { get; set; }
 
-	public List<Group> Groups { get; set; }
+	[JsonIgnore] public List<Group> Groups { get; set; }
 	public List<Session> Sessions { get; set; } = [];
 }
 
