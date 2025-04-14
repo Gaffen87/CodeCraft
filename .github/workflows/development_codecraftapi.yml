@@ -61,5 +61,5 @@ jobs:
         with:
           app-name: 'CodeCraftApi'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}/myapp   # Ensure this points to the correct published folder
+          package: .
           
