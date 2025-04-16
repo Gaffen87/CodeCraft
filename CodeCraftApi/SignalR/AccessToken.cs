@@ -1,8 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace CodeCraftApi.Features.Groups.Hubs.Models;
+namespace CodeCraftApi.SignalR;
 
-internal sealed class HubRequestToken
+public class AccessToken
 {
 	[JsonPropertyName("sub")]
 	public string Sub { get; set; }

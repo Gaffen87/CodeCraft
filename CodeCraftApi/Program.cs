@@ -1,12 +1,15 @@
 global using FastEndpoints;
 global using FastEndpoints.Swagger;
+using CodeCraft.SignalR.Handlers;
 using CodeCraftApi.Database;
 using CodeCraftApi.Domain.Entities;
-using CodeCraftApi.Features.Groups.Hubs;
+using CodeCraftApi.SignalR;
 using FastEndpoints.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Scalar.AspNetCore;
 
 namespace CodeCraftApi
@@ -19,8 +22,15 @@ namespace CodeCraftApi
 
 			builder.Logging.AddApplicationInsights().AddAzureWebAppDiagnostics();
 
+			builder.Services.AddMediatR(cfg =>
+			{
+				cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+			});
+
 			builder.Services.AddSignalR()
-				.AddNewtonsoftJsonProtocol();
+				.AddNewtonsoftJsonProtocol(config => config.PayloadSerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy())));
+
+			builder.Services.AddHubMethodHandlers([typeof(Program).Assembly]);
 
 			builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
 
@@ -43,7 +53,7 @@ namespace CodeCraftApi
 						var path = context.HttpContext.Request.Path;
 
 						if (!string.IsNullOrEmpty(accessToken) &&
-						(path.StartsWithSegments("/hubs/groups")))
+						(path.StartsWithSegments("/hub")))
 						{
 							context.Token = accessToken;
 						}
@@ -86,7 +96,7 @@ namespace CodeCraftApi
 				});
 			}
 
-			app.MapHub<GroupHub>("/hubs/groups");
+			app.MapHub<AppHub>("/hub");
 
 			app.Run();
 		}

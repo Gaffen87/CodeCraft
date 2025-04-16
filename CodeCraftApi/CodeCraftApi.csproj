@@ -8,10 +8,11 @@
 
 	<ItemGroup>
 		<PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
-		<PackageReference Include="FastEndpoints" Version="5.35.0" />
-		<PackageReference Include="FastEndpoints.Security" Version="5.35.0" />
-		<PackageReference Include="FastEndpoints.Swagger" Version="5.35.0" />
+		<PackageReference Include="FastEndpoints" Version="6.0.0" />
+		<PackageReference Include="FastEndpoints.Security" Version="6.0.0" />
+		<PackageReference Include="FastEndpoints.Swagger" Version="6.0.0" />
 		<PackageReference Include="FluentValidation" Version="11.11.0" />
+		<PackageReference Include="MediatR" Version="12.5.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.2.0" />
 		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="9.0.4" />
@@ -35,6 +36,10 @@
 
 	<ItemGroup>
 		<Folder Include="Features\Users\SignIn\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\SignalR.REPR\SignalR.REPR.csproj" />
 	</ItemGroup>
 
 </Project>

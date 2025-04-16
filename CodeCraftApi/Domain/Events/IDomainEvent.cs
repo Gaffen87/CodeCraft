@@ -1,5 +1,7 @@
-﻿namespace CodeCraftApi.Domain.Events;
+﻿using MediatR;
 
-public interface IDomainEvent
+namespace CodeCraftApi.Domain.Events;
+
+public interface IDomainEvent : INotification
 {
 }
