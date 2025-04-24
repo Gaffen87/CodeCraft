@@ -1,11 +1,26 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using System.Reflection;
 
-namespace CodeCraftApi.SignalR;
+namespace SignalR.PepR;
 
 public abstract class HubMethodHandler<TPayload> : IHubMethodHandler
 {
-	public virtual string MethodName => GetType().Name.Replace("Handler", "");
+	public virtual string MethodName
+	{
+		get
+		{
+			var type = GetType();
+
+			var attr = type.GetCustomAttribute<MethodNameAttribute>();
+			if (attr != null)
+			{
+				return attr.Name;
+			}
+
+			return type.Name.Replace("Handler", "");
+		}
+	}
 
 	public async Task HandleAsync(HubCallerContext context, object payload)
 	{

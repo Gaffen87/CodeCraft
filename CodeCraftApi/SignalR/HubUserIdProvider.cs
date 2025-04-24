@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace CodeCraftApi.SignalR;
 
-public class UserIdProvider : IUserIdProvider
+public class HubUserIdProvider : IUserIdProvider
 {
 	public virtual string? GetUserId(HubConnectionContext connection)
 	{

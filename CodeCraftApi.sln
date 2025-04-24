@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCraftApi", "CodeCraftAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeCraftApi.Test", "CodeCraftApi.Test\CodeCraftApi.Test.csproj", "{553A05D0-1FA3-4C56-B2EA-B5FEB27491FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.REPR", "SignalR.REPR\SignalR.REPR.csproj", "{279C8A72-5F50-4992-A129-FA7C1FAAD4CC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalR.PepR", "SignalR.REPR\SignalR.PepR.csproj", "{279C8A72-5F50-4992-A129-FA7C1FAAD4CC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

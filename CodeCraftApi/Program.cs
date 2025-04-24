@@ -1,6 +1,5 @@
 global using FastEndpoints;
 global using FastEndpoints.Swagger;
-using CodeCraft.SignalR.Handlers;
 using CodeCraftApi.Database;
 using CodeCraftApi.Domain.Entities;
 using CodeCraftApi.SignalR;
@@ -11,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Scalar.AspNetCore;
+using SignalR.PepR;
 
 namespace CodeCraftApi
 {
@@ -32,7 +32,7 @@ namespace CodeCraftApi
 
 			builder.Services.AddHubMethodHandlers([typeof(Program).Assembly]);
 
-			builder.Services.AddSingleton<IUserIdProvider, UserIdProvider>();
+			builder.Services.AddSingleton<IUserIdProvider, HubUserIdProvider>();
 
 			builder.Services.AddCors(
 				options =>

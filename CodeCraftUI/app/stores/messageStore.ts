@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import type { Message } from "~/types/types";
 
 interface MessageState {
@@ -16,6 +16,9 @@ export const useMessageStore = create<MessageState>()(
 				set((state) => ({ messages: [...state.messages, msg] })),
 			clearMessages: () => set({ messages: [] }),
 		}),
-		{ name: "message-store" }
+		{
+			name: "message-store",
+			storage: createJSONStorage(() => sessionStorage),
+		}
 	)
 );

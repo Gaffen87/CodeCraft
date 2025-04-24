@@ -28,7 +28,7 @@ export default function SignalRProvider({
 		if (!session?.access_token) return;
 
 		const newConnection = new HubConnectionBuilder()
-			.withUrl("https://localhost:7060/hubs/groups", {
+			.withUrl("https://localhost:7060/hub", {
 				accessTokenFactory: () => session.access_token,
 			})
 			.withAutomaticReconnect()

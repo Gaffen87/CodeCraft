@@ -8,3 +8,11 @@ export type Message = {
 	type: "group" | "chat" | "code";
 	content: string;
 };
+
+export type AddToGroupPayload = {
+	groupName: string;
+};
+
+export type RemoveFromGroupPayload = {
+	groupName: string;
+};

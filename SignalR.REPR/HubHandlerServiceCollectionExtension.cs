@@ -1,8 +1,7 @@
-﻿using CodeCraftApi.SignalR;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace CodeCraft.SignalR.Handlers;
+namespace SignalR.PepR;
 public static class HubHandlerServiceCollectionExtensions
 {
 	public static IServiceCollection AddHubMethodHandlers(this IServiceCollection services, Assembly[] assemblies)

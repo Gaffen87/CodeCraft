@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace CodeCraftApi.SignalR;
+namespace SignalR.PepR;
 
 public interface IHubMethodHandler
 {

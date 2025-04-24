@@ -1,6 +1,7 @@
 ﻿using CodeCraftApi.Database;
 using CodeCraftApi.SignalR;
 using Microsoft.AspNetCore.SignalR;
+using SignalR.PepR;
 
 namespace CodeCraftApi.Features.Groups.AddToGroup;
 
