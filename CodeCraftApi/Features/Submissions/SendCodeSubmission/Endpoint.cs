@@ -6,12 +6,13 @@ internal sealed class Endpoint : Endpoint<Request, Response, Mapper>
 {
 	public override void Configure()
 	{
-		Post("route");
+		Post("/codesubmission");
+		AllowAnonymous();
 	}
 
 	public override async Task HandleAsync(Request r, CancellationToken c)
 	{
-		string result = SimpleCompiler.HandleSubmission("hej");
-		await SendAsync(new Response());
+		var result = await SimpleCompiler.CodeRunner(r.CodeRequest);
+		await SendAsync(new Response { Result = result });
 	}
 }

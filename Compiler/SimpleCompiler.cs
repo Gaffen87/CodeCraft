@@ -1,81 +1,69 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Diagnostics;
+using System.Reflection;
+using System.Text;
 
 namespace Compiler;
-public class SimpleCompiler
+public partial class SimpleCompiler
 {
-	public static string HandleSubmission(string code)
+	public async static Task<string> CodeRunner(CodeExecutionRequest request)
 	{
-		string path;
+		string tempProjectPath = Path.Combine(Path.GetTempPath(), "CSharpExecution");
+		Directory.CreateDirectory(tempProjectPath);
+		Directory.GetFiles(tempProjectPath).ToList().ForEach(System.IO.File.Delete);
 
-		var compileErrors = CompileSubmission(code, out path);
-
-		if (!string.IsNullOrEmpty(compileErrors))
+		foreach (var file in request.Files)
 		{
-			return "[Compilation Failed]\n" + compileErrors;
+			string filePath = Path.Combine(tempProjectPath, file.FileName);
+			await System.IO.File.WriteAllTextAsync(filePath, file.Content);
 		}
 
-		string output = RunSubmission(path);
-
-		Cleanup(path);
-
-		return output;
+		return CompileAndRun(tempProjectPath);
 	}
-
-	private static string? CompileSubmission(string code, out string path)
+	private static string CompileAndRun(string path)
 	{
-		path = Path.Combine(Path.GetTempPath(), $"submission_{Guid.NewGuid()}.exe");
+		var sourceFiles = Directory.GetFiles(path, "*.cs");
+		var syntaxTrees = sourceFiles.Select(file
+			=> CSharpSyntaxTree.ParseText(System.IO.File.ReadAllText(file))).ToList();
 
-		var syntaxTree = CSharpSyntaxTree.ParseText(code);
-
-		var refs = AppDomain.CurrentDomain.GetAssemblies()
-			.Where(a => !a.IsDynamic && !string.IsNullOrWhiteSpace(a.Location))
-			.Select(a => MetadataReference.CreateFromFile(a.Location));
-
-		var compilation = CSharpCompilation.Create(
-			Path.GetFileNameWithoutExtension(path),
-			new[] { syntaxTree },
-			refs,
-			new CSharpCompilationOptions(OutputKind.ConsoleApplication)
-		);
-
-		var result = compilation.Emit(path);
-
-		if (!result.Success)
+		var references = new List<MetadataReference>
 		{
-			var errors = result.Diagnostics
-				.Where(d => d.Severity == DiagnosticSeverity.Error)
-				.Select(d => d.ToString());
-			return string.Join("\n", errors);
-		}
-
-		return null;
-	}
-
-	private static string RunSubmission(string exePath)
-	{
-		var psi = new ProcessStartInfo
-		{
-			FileName = exePath,
-			RedirectStandardOutput = true,
-			RedirectStandardError = true,
-			UseShellExecute = false,
-			CreateNoWindow = true
+			MetadataReference.CreateFromFile(typeof(object).Assembly.Location),
+			MetadataReference.CreateFromFile(typeof(Console).Assembly.Location),
+			MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
 		};
 
-		using var process = new Process { StartInfo = psi };
-		process.Start();
+		var compilation = CSharpCompilation.Create("DynamicProject")
+			.WithOptions(new CSharpCompilationOptions(OutputKind.ConsoleApplication))
+			.AddReferences(references)
+			.AddSyntaxTrees(syntaxTrees);
 
-		string output = process.StandardOutput.ReadToEnd();
-		string error = process.StandardError.ReadToEnd();
-		process.WaitForExit();
+		using var ms = new MemoryStream();
+		var emitResult = compilation.Emit(ms);
 
-		return string.IsNullOrWhiteSpace(error) ? output : "[Runtime Error]\n" + error;
-	}
+		if (!emitResult.Success)
+		{
+			var errors = string.Join("\n", emitResult.Diagnostics
+				.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
+				.Select(diagnostic => diagnostic.ToString()));
 
-	private static void Cleanup(string path)
-	{
-		try { if (File.Exists(path)) File.Delete(path); } catch { }
+			return $"Compilation failed:\n{errors}";
+		}
+
+		ms.Seek(0, SeekOrigin.Begin);
+		var assembly = Assembly.Load(ms.ToArray());
+
+		var outputBuilder = new StringBuilder();
+		using (var writer = new StringWriter(outputBuilder))
+		{
+			Console.SetOut(writer);
+			var type = assembly.GetType("Program");
+			var method = type?.GetMethod("Main", BindingFlags.Static | BindingFlags.Public);
+
+			if (method != null)
+				method.Invoke(null, null);
+		}
+
+		return outputBuilder.ToString();
 	}
 }
