@@ -10,7 +10,7 @@ export default function TeacherDashboard() {
         {user?.user_metadata.user_name}
       </p>
       <p className="text-center opacity-80">{user?.email}</p>
-      <p className="text-center opacity-80">{user?.user_metadata.role}</p>
+      <p className="text-center opacity-80">{user?.user_metadata.role} </p>
     </div>
   );
 }
