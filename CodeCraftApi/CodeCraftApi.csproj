@@ -35,12 +35,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Features\Submissions\" />
 		<Folder Include="Features\Tests\" />
 		<Folder Include="Features\Users\SignIn\" />
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Compiler\Compiler.csproj" />
 	  <ProjectReference Include="..\SignalR.REPR\SignalR.PepR.csproj" />
 	</ItemGroup>
 
