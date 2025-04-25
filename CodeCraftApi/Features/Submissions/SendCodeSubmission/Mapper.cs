@@ -1,6 +1,32 @@
-﻿namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
+﻿using CodeCraftApi.Domain.Entities;
 
-internal sealed class Mapper : Mapper<Request, Response, object>
+namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
+
+internal sealed class Mapper : Mapper<CodeSubmissionRequest, CodeSubmissionResponse, CodeSubmission>
 {
-	//TODO map to entity
+	public override CodeSubmission ToEntity(CodeSubmissionRequest r)
+	{
+		return new CodeSubmission
+		{
+			Id = Guid.NewGuid(),
+			SubmitDate = DateTimeOffset.UtcNow,
+			IsSuccess = true,
+			Files = FilesToEntity(r.Files),
+		};
+	}
+
+	private static List<CodeFile> FilesToEntity(List<CodeFileRequest> files)
+	{
+		List<CodeFile> codeFiles = [];
+		foreach (var file in files)
+		{
+			codeFiles.Add(new()
+			{
+				Id = Guid.NewGuid(),
+				FileName = file.FileName,
+				Content = file.Content,
+			});
+		}
+		return codeFiles;
+	}
 }

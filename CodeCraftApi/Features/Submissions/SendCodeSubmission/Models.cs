@@ -1,16 +1,12 @@
-﻿using Compiler;
+﻿namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
 
-namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
-
-internal sealed class Request
+internal sealed class CodeSubmissionRequest
 {
-	public CodeExecutionRequest CodeRequest { get; set; }
+	public List<CodeFileRequest> Files { get; set; }
+	public Guid SubmittedBy { get; set; }
+	public Guid ExerciseStep { get; set; }
 
-	//TODO complete request model
-	//public Guid SubmittedBy { get; set; }
-	//public Guid ExerciseStep { get; set; }
-
-	internal sealed class Validator : Validator<Request>
+	internal sealed class Validator : Validator<CodeSubmissionRequest>
 	{
 		public Validator()
 		{
@@ -19,7 +15,21 @@ internal sealed class Request
 	}
 }
 
-internal sealed class Response
+public class CodeFileRequest
+{
+	public string FileName { get; set; }
+	public string Content { get; set; }
+
+	internal sealed class Validator : Validator<CodeFileRequest>
+	{
+		public Validator()
+		{
+			//TODO validation logic
+		}
+	}
+}
+
+internal sealed class CodeSubmissionResponse
 {
 	public string Result { get; set; }
 }

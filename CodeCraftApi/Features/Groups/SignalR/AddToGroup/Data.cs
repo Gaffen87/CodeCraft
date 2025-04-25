@@ -1,9 +1,10 @@
 ﻿using CodeCraftApi.Database;
+using CodeCraftApi.Domain.DomainEvents;
 using CodeCraftApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Group = CodeCraftApi.Domain.Entities.Group;
 
-namespace CodeCraftApi.Features.Groups.AddToGroup;
+namespace CodeCraftApi.Features.Groups.SignalR.AddToGroup;
 
 internal sealed class Data
 {
@@ -12,6 +13,8 @@ internal sealed class Data
 		if (await GroupExists(context, groupName) == false)
 		{
 			await CreateNewGroup(context, groupName);
+
+			await new GroupCreatedEvent(groupName).PublishAsync();
 		}
 
 		var group = await context.Groups

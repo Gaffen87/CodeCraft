@@ -3,7 +3,7 @@ using CodeCraftApi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.PepR;
 
-namespace CodeCraftApi.Features.Groups.AddToGroup;
+namespace CodeCraftApi.Features.Groups.SignalR.AddToGroup;
 
 internal sealed class AddToGroupHandler(IHubContext<AppHub> hub, AppDbContext dbContext) : HubMethodHandler<AddToGroupPayload>
 {

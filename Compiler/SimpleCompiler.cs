@@ -6,20 +6,21 @@ using System.Text;
 namespace Compiler;
 public partial class SimpleCompiler
 {
-	public async static Task<string> CodeRunner(CodeExecutionRequest request)
+	public static async Task<string> CodeRunner(Dictionary<string, string> codeFiles)
 	{
 		string tempProjectPath = Path.Combine(Path.GetTempPath(), "CSharpExecution");
 		Directory.CreateDirectory(tempProjectPath);
 		Directory.GetFiles(tempProjectPath).ToList().ForEach(System.IO.File.Delete);
 
-		foreach (var file in request.Files)
+		foreach (var item in codeFiles)
 		{
-			string filePath = Path.Combine(tempProjectPath, file.FileName);
-			await System.IO.File.WriteAllTextAsync(filePath, file.Content);
+			string filePath = Path.Combine(tempProjectPath, item.Key);
+			await System.IO.File.WriteAllTextAsync(filePath, item.Value);
 		}
 
 		return CompileAndRun(tempProjectPath);
 	}
+
 	private static string CompileAndRun(string path)
 	{
 		var sourceFiles = Directory.GetFiles(path, "*.cs");

@@ -39,29 +39,35 @@ internal sealed class Mapper : Mapper<CreateExerciseRequest, CreateExerciseRespo
 	}
 
 
-	public static List<ExerciseItem> ItemToEntity(List<CreateExerciseItem> r)
+	private static List<ExerciseItem> ItemToEntity(List<CreateExerciseItem> r)
 	{
 		List<ExerciseItem> items = [];
 		items.AddRange(r.Select(item => new ExerciseItem()
 		{
-			Id = Guid.NewGuid(), Title = item.Title, Number = item.Number, Steps = StepToEntity(item.Steps),
+			Id = Guid.NewGuid(),
+			Title = item.Title,
+			Number = item.Number,
+			Steps = StepToEntity(item.Steps),
 		}));
 
 		return items;
 	}
 
-	public static List<ExerciseItemResponse> EntityToItemResponse(List<ExerciseItem> exerciseItems)
+	private static List<ExerciseItemResponse> EntityToItemResponse(List<ExerciseItem> exerciseItems)
 	{
 		List<ExerciseItemResponse> items = [];
 		items.AddRange(exerciseItems.Select(item => new ExerciseItemResponse()
 		{
-			Id = Guid.NewGuid(), Title = item.Title, Number = item.Number, Steps = EntityToStepResponse(item.Steps),
+			Id = Guid.NewGuid(),
+			Title = item.Title,
+			Number = item.Number,
+			Steps = EntityToStepResponse(item.Steps),
 		}));
 
 		return items;
 	}
 
-	public static List<ExerciseStep> StepToEntity(List<CreateExerciseStep> r)
+	private static List<ExerciseStep> StepToEntity(List<CreateExerciseStep> r)
 	{
 		List<ExerciseStep> steps = [];
 		steps.AddRange(r.Select(item => new ExerciseStep()
@@ -78,7 +84,7 @@ internal sealed class Mapper : Mapper<CreateExerciseRequest, CreateExerciseRespo
 		return steps;
 	}
 
-	public static List<ExerciseStepResponse> EntityToStepResponse(List<ExerciseStep> exerciseSteps)
+	private static List<ExerciseStepResponse> EntityToStepResponse(List<ExerciseStep> exerciseSteps)
 	{
 		List<ExerciseStepResponse> steps = [];
 		steps.AddRange(exerciseSteps.Select(item => new ExerciseStepResponse()

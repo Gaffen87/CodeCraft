@@ -2,7 +2,7 @@
 using CodeCraftApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace CodeCraftApi.Features.Groups.RemoveFromGroup;
+namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
 
 public class Data
 {
