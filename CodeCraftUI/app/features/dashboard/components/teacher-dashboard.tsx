@@ -58,6 +58,7 @@ export default function TeacherDashboard() {
                   {group.members &&
                     group.members.map((member) => <p key={member}>{member}</p>)}
                 </CardContent>
+                //test
                 <CardFooter>{/* Add any footer content here */}</CardFooter>
               </Card>
             </div>
