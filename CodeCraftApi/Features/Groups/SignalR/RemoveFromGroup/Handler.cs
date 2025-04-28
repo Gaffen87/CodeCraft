@@ -3,7 +3,7 @@ using CodeCraftApi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.PepR;
 
-namespace CodeCraftApi.Features.Groups.RemoveFromGroup;
+namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
 
 internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, AppDbContext dbContext) : HubMethodHandler<RemoveFromGroupPayload>
 {

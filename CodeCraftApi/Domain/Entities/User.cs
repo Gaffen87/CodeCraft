@@ -8,7 +8,6 @@ public class User
 	public Role Role { get; set; }
 	public Status Status { get; set; }
 	public string UserName { get; set; }
-
 	[JsonIgnore] public List<Group> Groups { get; set; }
 	public List<Session> Sessions { get; set; } = [];
 }

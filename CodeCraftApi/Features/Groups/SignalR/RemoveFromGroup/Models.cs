@@ -1,6 +1,6 @@
 ﻿using CodeCraftApi.Domain.Entities;
 
-namespace CodeCraftApi.Features.Groups.RemoveFromGroup;
+namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
 
 internal sealed class RemoveFromGroupPayload
 {

@@ -1,6 +1,6 @@
 ﻿using CodeCraftApi.Domain.Entities;
 
-namespace CodeCraftApi.Features.Groups.AddToGroup;
+namespace CodeCraftApi.Features.Groups.SignalR.AddToGroup;
 
 internal sealed class AddToGroupPayload
 {
