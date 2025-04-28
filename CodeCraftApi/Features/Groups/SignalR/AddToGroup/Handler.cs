@@ -13,16 +13,16 @@ internal sealed class AddToGroupHandler(IHubContext<AppHub> hub, AppDbContext db
 
 		var members = await Data.AddUserToGroup(dbContext, payload.GroupName, callerContext.UserIdentifier!);
 
-		var response = new HubResponse<AddToGroupResponse>
-		{
-			Type = HubResponseType.Group,
-			Content = new AddToGroupResponse
-			{
-				GroupName = payload.GroupName,
-				Members = members
-			}
-		};
+		//var response = new HubResponse<AddToGroupResponse>
+		//{
+		//	Type = HubResponseType.Group,
+		//	Content = new AddToGroupResponse
+		//	{
+		//		GroupName = payload.GroupName,
+		//		Members = members
+		//	}
+		//};
 
-		await hub.Clients.All.SendCoreAsync("ReceiveMessage", [response]);
+		//await hub.Clients.All.SendCoreAsync("ReceiveMessage", [response]);
 	}
 }

@@ -1,4 +1,6 @@
-﻿namespace CodeCraftApi.Domain.DomainEvents;
+﻿using CodeCraftApi.Domain.Entities;
 
-public record GroupCreatedEvent(string GroupName) : IEvent { }
+namespace CodeCraftApi.Domain.DomainEvents;
+
+public record GroupCreatedEvent(Guid GroupId, string GroupName, List<User> Members, string Type = "created") : IEvent { }
 

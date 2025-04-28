@@ -2,7 +2,8 @@ import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import { createContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useMessageStore } from "~/stores/messageStore";
-import type { Message } from "~/types/types";
+import { useGroupStore } from "~/stores/groupStore";
+import type { Group, GroupMessage, Message } from "~/types/types";
 
 interface SignalRContextType {
 	connection: HubConnection | null;
@@ -22,6 +23,7 @@ export default function SignalRProvider({
 	const [connection, setConnection] = useState<HubConnection | null>(null);
 	const [isConnected, setIsConnected] = useState(false);
 	const { addMessage } = useMessageStore();
+	const { addGroup, removeGroup, addMember, removeMember } = useGroupStore();
 	const { session } = useAuth();
 
 	useEffect(() => {
@@ -47,6 +49,25 @@ export default function SignalRProvider({
 		newConnection.on("ReceiveMessage", (message: Message) => {
 			addMessage(message);
 			console.log("Received message:", message);
+		});
+
+		newConnection.on("ReceiveGroupMessage", (message) => {
+			console.log("Received group message:", message);
+			if (message.type === "created") {
+				addGroup({ id: message.groupId, name: message.groupName, members: [] });
+			}
+			if (message.type === "deleted") {
+				removeGroup(message.groupId);
+			}
+			if (message.type === "joined") {
+				addMember(message.groupId, {
+					id: message.user[0].id,
+					name: message.user[0].userName,
+				});
+			}
+			if (message.type === "left") {
+				removeMember(message.groupId, message.user[0].id);
+			}
 		});
 
 		newConnection.onclose(() => setIsConnected(false));

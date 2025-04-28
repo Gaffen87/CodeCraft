@@ -12,29 +12,34 @@ internal sealed class Data
 	{
 		if (await GroupExists(context, groupName) == false)
 		{
-			await CreateNewGroup(context, groupName);
+			var id = await CreateNewGroup(context, groupName);
 
-			await new GroupCreatedEvent(groupName).PublishAsync();
+			await new GroupCreatedEvent(id, groupName, []).PublishAsync();
 		}
 
-		var group = await context.Groups
-			.Include(g => g.Members)
-			.SingleOrDefaultAsync(g => g.Name == groupName);
-
-		var user = await context.Users
-			.Include(x => x.Groups)
-			.SingleOrDefaultAsync(x => x.Id == Guid.Parse(userId));
+		User? user = await GetUser(context, userId);
+		Group? group = await GetGroup(context, groupName);
 
 		if (user != null && group != null)
 		{
 			group.Members.Add(user);
 			user.Groups.Add(group);
+
+			await new UserJoinedGroupEvent(group.Id, groupName, [user]).PublishAsync();
 		}
 
 		await context.SaveChangesAsync();
 
 		return group!.Members;
 	}
+
+	private static async Task<Group?> GetGroup(AppDbContext context, string groupName) => await context.Groups
+				.Include(g => g.Members)
+				.SingleOrDefaultAsync(g => g.Name == groupName);
+	private static async Task<User?> GetUser(AppDbContext context, string userId) => await context.Users
+				.Include(x => x.Groups)
+				.SingleOrDefaultAsync(x => x.Id == Guid.Parse(userId));
+
 	public async static Task<Guid> GetIdByName(AppDbContext context, string groupName)
 	{
 		var group = await context.Groups.FirstOrDefaultAsync(g => g.Name == groupName);
@@ -46,7 +51,7 @@ internal sealed class Data
 		return await context.Groups.FirstOrDefaultAsync(g => g.Name == groupName) != null;
 	}
 
-	public async static Task CreateNewGroup(AppDbContext context, string groupName)
+	public async static Task<Guid> CreateNewGroup(AppDbContext context, string groupName)
 	{
 		Group newGroup = new()
 		{
@@ -62,5 +67,7 @@ internal sealed class Data
 
 		await context.Groups.AddAsync(newGroup);
 		context.SaveChanges();
+
+		return newGroup.Id;
 	}
 }
