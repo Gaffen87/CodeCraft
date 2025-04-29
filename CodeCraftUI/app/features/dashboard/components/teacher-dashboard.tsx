@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useGroupStore } from "../../../stores/groupStore";
-import { useGroups } from "~/hooks/useGroups";
+import useGroups from "~/hooks/useGroups";
 import GroupCard from "./group-card";
 import { Button } from "~/components/ui/button";
 
