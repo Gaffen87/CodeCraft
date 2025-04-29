@@ -4,15 +4,15 @@ import TeacherDashboard from "./components/teacher-dashboard";
 import useAuth from "~/hooks/useAuth";
 
 export default function Dashboard() {
-  const { user } = useAuth();
+	const { user } = useAuth();
 
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center">
-      {user?.user_metadata.role === "student" ? (
-        <StudentDashboard />
-      ) : (
-        <TeacherDashboard />
-      )}
-    </div>
-  );
+	return (
+		<div className="w-full h-full flex flex-col p-2">
+			{user?.user_metadata.role === "student" ? (
+				<StudentDashboard />
+			) : (
+				<TeacherDashboard />
+			)}
+		</div>
+	);
 }

@@ -8,14 +8,6 @@ public class Group
 	public DateTimeOffset UpdatedAt { get; set; }
 	public bool IsActive { get; set; }
 	public bool IsDeleted { get; set; }
-	public GroupSize GroupSize { get; set; }
 	public List<User> Members { get; set; }
 	public List<Exercise> Exercises { get; set; }
-}
-
-public enum GroupSize
-{
-	Team,
-	Group,
-	Pair
 }

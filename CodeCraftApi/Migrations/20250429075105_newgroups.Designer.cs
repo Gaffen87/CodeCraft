@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CodeCraftApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250404074140_UpdatedUserTableAgain")]
-    partial class UpdatedUserTableAgain
+    [Migration("20250429075105_newgroups")]
+    partial class newgroups
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,6 @@ namespace CodeCraftApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "exercise_difficulty", new[] { "easy", "hard", "medium", "unassigned" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "group_size", new[] { "group", "pair", "team" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "role", new[] { "student", "teacher", "unassigned" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "session_status", new[] { "active", "passive", "reconnecting" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "status", new[] { "active", "passive" });
@@ -75,6 +74,76 @@ namespace CodeCraftApi.Migrations
                         .HasName("pk_categories");
 
                     b.ToTable("categories", (string)null);
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("CodeSubmissionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("code_submission_id");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("file_name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_code_files");
+
+                    b.HasIndex("CodeSubmissionId")
+                        .HasDatabaseName("ix_code_files_code_submission_id");
+
+                    b.ToTable("code_files", (string)null);
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeSubmission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ExerciseStepId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_step_id");
+
+                    b.Property<bool>("IsSuccess")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_success");
+
+                    b.Property<string>("Result")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("result");
+
+                    b.Property<DateTimeOffset>("SubmitDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("submit_date");
+
+                    b.Property<Guid>("SubmittedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("submitted_by_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_submissions");
+
+                    b.HasIndex("ExerciseStepId")
+                        .HasDatabaseName("ix_submissions_exercise_step_id");
+
+                    b.HasIndex("SubmittedById")
+                        .HasDatabaseName("ix_submissions_submitted_by_id");
+
+                    b.ToTable("submissions", (string)null);
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.Exercise", b =>
@@ -327,6 +396,10 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
                     b.Property<Role>("Role")
                         .HasColumnType("role")
                         .HasColumnName("role");
@@ -343,26 +416,10 @@ namespace CodeCraftApi.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
+                    b.HasIndex("GroupId")
+                        .HasDatabaseName("ix_users_group_id");
+
                     b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("GroupUser", b =>
-                {
-                    b.Property<Guid>("GroupsId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("groups_id");
-
-                    b.Property<Guid>("MembersId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("members_id");
-
-                    b.HasKey("GroupsId", "MembersId")
-                        .HasName("pk_group_user");
-
-                    b.HasIndex("MembersId")
-                        .HasDatabaseName("ix_group_user_members_id");
-
-                    b.ToTable("group_user", (string)null);
                 });
 
             modelBuilder.Entity("CategoryExercise", b =>
@@ -380,6 +437,35 @@ namespace CodeCraftApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_category_exercise_exercises_exercises_id");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeFile", b =>
+                {
+                    b.HasOne("CodeCraftApi.Domain.Entities.CodeSubmission", null)
+                        .WithMany("Files")
+                        .HasForeignKey("CodeSubmissionId")
+                        .HasConstraintName("fk_code_files_submissions_code_submission_id");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeSubmission", b =>
+                {
+                    b.HasOne("CodeCraftApi.Domain.Entities.ExerciseStep", "ExerciseStep")
+                        .WithMany()
+                        .HasForeignKey("ExerciseStepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_submissions_exercise_step_exercise_step_id");
+
+                    b.HasOne("CodeCraftApi.Domain.Entities.Group", "SubmittedBy")
+                        .WithMany()
+                        .HasForeignKey("SubmittedById")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_submissions_groups_submitted_by_id");
+
+                    b.Navigation("ExerciseStep");
+
+                    b.Navigation("SubmittedBy");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.Exercise", b =>
@@ -441,21 +527,19 @@ namespace CodeCraftApi.Migrations
                         .HasConstraintName("fk_tests_exercise_step_exercise_step_id");
                 });
 
-            modelBuilder.Entity("GroupUser", b =>
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>
                 {
-                    b.HasOne("CodeCraftApi.Domain.Entities.Group", null)
-                        .WithMany()
-                        .HasForeignKey("GroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_user_groups_groups_id");
+                    b.HasOne("CodeCraftApi.Domain.Entities.Group", "Group")
+                        .WithMany("Members")
+                        .HasForeignKey("GroupId")
+                        .HasConstraintName("fk_users_groups_group_id");
 
-                    b.HasOne("CodeCraftApi.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("MembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_user_users_members_id");
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeSubmission", b =>
+                {
+                    b.Navigation("Files");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.Exercise", b =>
@@ -471,6 +555,11 @@ namespace CodeCraftApi.Migrations
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.ExerciseStep", b =>
                 {
                     b.Navigation("Tests");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.Group", b =>
+                {
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>

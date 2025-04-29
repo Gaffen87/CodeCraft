@@ -13,16 +13,16 @@ internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, AppDbConte
 
 		var members = await Data.RemoveUserFromGroup(dbContext, payload.GroupName, context.UserIdentifier!);
 
-		var response = new HubResponse<RemoveFromGroupResponse>
-		{
-			Type = HubResponseType.Group,
-			Content = new RemoveFromGroupResponse
-			{
-				GroupName = payload.GroupName,
-				Members = members
-			}
-		};
+		//var response = new HubResponse<RemoveFromGroupResponse>
+		//{
+		//	Type = HubResponseType.Group,
+		//	Content = new RemoveFromGroupResponse
+		//	{
+		//		GroupName = payload.GroupName,
+		//		Members = members
+		//	}
+		//};
 
-		await hub.Clients.All.SendCoreAsync("ReceiveMessage", [response]);
+		//await hub.Clients.All.SendCoreAsync("ReceiveMessage", [response]);
 	}
 }

@@ -69,9 +69,8 @@ namespace CodeCraftApi
 				{
 					o.MapEnum<ExerciseDifficulty>();
 					o.MapEnum<Role>();
-					o.MapEnum<Status>("status");
+					o.MapEnum<Status>();
 					o.MapEnum<SessionStatus>();
-					o.MapEnum<GroupSize>();
 				}));
 
 			var app = builder.Build();

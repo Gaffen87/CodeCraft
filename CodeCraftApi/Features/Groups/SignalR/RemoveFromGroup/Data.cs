@@ -10,10 +10,9 @@ public class Data
 	{
 		var group = await context.Groups.Include(m => m.Members).SingleOrDefaultAsync(g => g.Name == groupName);
 
-		var user = await context.Users.Include(g => g.Groups).SingleOrDefaultAsync(u => u.Id == Guid.Parse(userId));
+		var user = await context.Users.SingleOrDefaultAsync(u => u.Id == Guid.Parse(userId));
 
 		group.Members.Remove(user);
-		user.Groups.Remove(group);
 
 		if (group.Members.Count == 0)
 		{

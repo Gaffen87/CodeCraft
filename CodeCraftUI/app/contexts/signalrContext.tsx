@@ -66,7 +66,7 @@ export default function SignalRProvider({
 				});
 			}
 			if (message.type === "left") {
-				removeMember(message.groupId, message.user[0].id);
+				removeMember(message.groupId, message.userId);
 			}
 		});
 

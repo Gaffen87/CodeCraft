@@ -22,8 +22,14 @@ internal sealed class Data
 
 		if (user != null && group != null)
 		{
+			var userGroup = context.Groups.Where(m => m.Members.Any(u => u.Id == user.Id)).SingleOrDefault();
+			if (userGroup != null)
+			{
+				userGroup.Members.Remove(user);
+				await new UserLeftGroupEvent(userGroup.Id, user.Id).PublishAsync();
+			}
+
 			group.Members.Add(user);
-			user.Groups.Add(group);
 
 			await new UserJoinedGroupEvent(group.Id, groupName, [user]).PublishAsync();
 		}
@@ -36,9 +42,7 @@ internal sealed class Data
 	private static async Task<Group?> GetGroup(AppDbContext context, string groupName) => await context.Groups
 				.Include(g => g.Members)
 				.SingleOrDefaultAsync(g => g.Name == groupName);
-	private static async Task<User?> GetUser(AppDbContext context, string userId) => await context.Users
-				.Include(x => x.Groups)
-				.SingleOrDefaultAsync(x => x.Id == Guid.Parse(userId));
+	private static async Task<User?> GetUser(AppDbContext context, string userId) => await context.Users.SingleOrDefaultAsync(x => x.Id == Guid.Parse(userId));
 
 	public async static Task<Guid> GetIdByName(AppDbContext context, string groupName)
 	{
@@ -57,7 +61,6 @@ internal sealed class Data
 		{
 			Id = Guid.NewGuid(),
 			Name = groupName,
-			GroupSize = GroupSize.Team,
 			IsActive = true,
 			CreatedAt = DateTimeOffset.UtcNow,
 			UpdatedAt = DateTimeOffset.UtcNow,

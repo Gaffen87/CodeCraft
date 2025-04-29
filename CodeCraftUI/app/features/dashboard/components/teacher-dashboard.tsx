@@ -1,26 +1,32 @@
-import useAuth from "~/hooks/useAuth";
 import { useEffect, useState } from "react";
-import type { Group } from "../../../types/types";
 import { useGroupStore } from "../../../stores/groupStore";
-import { useGetGroups } from "~/hooks/useGetGroups";
+import { useGroups } from "~/hooks/useGroups";
 import GroupCard from "./group-card";
+import { Button } from "~/components/ui/button";
 
 export default function TeacherDashboard() {
 	const { groups } = useGroupStore();
-	const { user } = useAuth();
-	const { loading } = useGetGroups();
+	const { loading, fetchGroups, addToGroup } = useGroups();
+
+	useEffect(() => {
+		fetchGroups();
+	}, []);
 
 	return (
 		<div>
 			<p className="text-2xl tracking-widest">Teacher Dashboard</p>
-			<p className="text-center mt-4 opacity-80">
-				{user?.user_metadata.user_name}
-			</p>
-			<p className="text-center opacity-80">{user?.email}</p>
-			<p className="text-center opacity-80">{user?.user_metadata.role} </p>
-
-			<h2 className="text-xl font-semibold">Your Groups</h2>
-			<div className="grid grid-cols-2 mt-10 ">
+			<h2 className="text-xl font-semibold">Groups</h2>
+			<Button
+				variant={"default"}
+				onClick={() =>
+					addToGroup({
+						groupName: "Gruppe " + Math.floor(Math.random() * 100).toString(),
+					})
+				}
+			>
+				Create Group
+			</Button>
+			<div className="grid grid-cols-3 mt-10 ">
 				{loading ? (
 					<p>Loading...</p>
 				) : groups && Array.isArray(groups) && groups.length > 0 ? (

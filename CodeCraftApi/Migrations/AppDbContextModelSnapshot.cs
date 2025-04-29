@@ -22,7 +22,6 @@ namespace CodeCraftApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "exercise_difficulty", new[] { "easy", "hard", "medium", "unassigned" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "group_size", new[] { "group", "pair", "team" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "role", new[] { "student", "teacher", "unassigned" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "session_status", new[] { "active", "passive", "reconnecting" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "status", new[] { "active", "passive" });
@@ -275,10 +274,6 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<GroupSize>("GroupSize")
-                        .HasColumnType("group_size")
-                        .HasColumnName("group_size");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
@@ -398,6 +393,10 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
                     b.Property<Role>("Role")
                         .HasColumnType("role")
                         .HasColumnName("role");
@@ -414,26 +413,10 @@ namespace CodeCraftApi.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
+                    b.HasIndex("GroupId")
+                        .HasDatabaseName("ix_users_group_id");
+
                     b.ToTable("users", (string)null);
-                });
-
-            modelBuilder.Entity("GroupUser", b =>
-                {
-                    b.Property<Guid>("GroupsId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("groups_id");
-
-                    b.Property<Guid>("MembersId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("members_id");
-
-                    b.HasKey("GroupsId", "MembersId")
-                        .HasName("pk_group_user");
-
-                    b.HasIndex("MembersId")
-                        .HasDatabaseName("ix_group_user_members_id");
-
-                    b.ToTable("group_user", (string)null);
                 });
 
             modelBuilder.Entity("CategoryExercise", b =>
@@ -541,21 +524,12 @@ namespace CodeCraftApi.Migrations
                         .HasConstraintName("fk_tests_exercise_step_exercise_step_id");
                 });
 
-            modelBuilder.Entity("GroupUser", b =>
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>
                 {
                     b.HasOne("CodeCraftApi.Domain.Entities.Group", null)
-                        .WithMany()
-                        .HasForeignKey("GroupsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_user_groups_groups_id");
-
-                    b.HasOne("CodeCraftApi.Domain.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("MembersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_group_user_users_members_id");
+                        .WithMany("Members")
+                        .HasForeignKey("GroupId")
+                        .HasConstraintName("fk_users_groups_group_id");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeSubmission", b =>
@@ -576,6 +550,11 @@ namespace CodeCraftApi.Migrations
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.ExerciseStep", b =>
                 {
                     b.Navigation("Tests");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.Group", b =>
+                {
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>

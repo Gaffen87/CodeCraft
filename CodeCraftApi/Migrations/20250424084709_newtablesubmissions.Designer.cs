@@ -253,10 +253,6 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
-                    b.Property<GroupSize>("GroupSize")
-                        .HasColumnType("group_size")
-                        .HasColumnName("group_size");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
