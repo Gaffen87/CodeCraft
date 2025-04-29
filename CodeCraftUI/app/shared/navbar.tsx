@@ -9,12 +9,14 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
+import { SidebarTrigger } from "~/components/ui/sidebar";
 
 export default function Navbar() {
 	const { user, signOut } = useAuth();
 
 	return (
-		<div className="bg-sidebar px-4 py-4 flex items-center border-b-foreground/25 border-b">
+		<div className="bg-sidebar px-4 py-4 flex items-center border-b-foreground/25 border-b w-full flex-none sticky top-0 z-50">
+			<SidebarTrigger />
 			<img src={Logo} alt="Logo" className="h-10 w-10 inline-block mr-2" />
 			<span className="mr-7 text-2xl text-foreground">CodeCraft</span>
 			<div className="w-0.5 h-full bg-foreground/25" />

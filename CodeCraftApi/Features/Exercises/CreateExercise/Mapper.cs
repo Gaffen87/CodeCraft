@@ -39,84 +39,64 @@ internal sealed class Mapper : Mapper<CreateExerciseRequest, CreateExerciseRespo
 	}
 
 
-	public static List<ExerciseItem> ItemToEntity(List<CreateExerciseItem> r)
+	private static List<ExerciseItem> ItemToEntity(List<CreateExerciseItem> r)
 	{
 		List<ExerciseItem> items = [];
-
-		foreach (var item in r)
+		items.AddRange(r.Select(item => new ExerciseItem()
 		{
-			ExerciseItem exerciseItem = new()
-			{
-				Id = Guid.NewGuid(),
-				Title = item.Title,
-				Number = item.Number,
-				Steps = StepToEntity(item.Steps),
-			};
-			items.Add(exerciseItem);
-		}
+			Id = Guid.NewGuid(),
+			Title = item.Title,
+			Number = item.Number,
+			Steps = StepToEntity(item.Steps),
+		}));
 
 		return items;
 	}
 
-	public static List<ExerciseItemResponse> EntityToItemResponse(List<ExerciseItem> exerciseItems)
+	private static List<ExerciseItemResponse> EntityToItemResponse(List<ExerciseItem> exerciseItems)
 	{
 		List<ExerciseItemResponse> items = [];
-
-		foreach (var item in exerciseItems)
+		items.AddRange(exerciseItems.Select(item => new ExerciseItemResponse()
 		{
-			ExerciseItemResponse response = new()
-			{
-				Id = Guid.NewGuid(),
-				Title = item.Title,
-				Number = item.Number,
-				Steps = EntityToStepResponse(item.Steps),
-			};
-			items.Add(response);
-		}
+			Id = Guid.NewGuid(),
+			Title = item.Title,
+			Number = item.Number,
+			Steps = EntityToStepResponse(item.Steps),
+		}));
 
 		return items;
 	}
 
-	public static List<ExerciseStep> StepToEntity(List<CreateExerciseStep> r)
+	private static List<ExerciseStep> StepToEntity(List<CreateExerciseStep> r)
 	{
 		List<ExerciseStep> steps = [];
-
-		foreach (var item in r)
+		steps.AddRange(r.Select(item => new ExerciseStep()
 		{
-			ExerciseStep step = new()
-			{
-				Id = Guid.NewGuid(),
-				Title = item.Title,
-				Description = item.Description,
-				DescriptionShort = item.DescriptionShort,
-				Contraints = item.Contraints,
-				Hints = item.Hints,
-				Tests = []
-			};
-			steps.Add(step);
-		}
+			Id = Guid.NewGuid(),
+			Title = item.Title,
+			Description = item.Description,
+			DescriptionShort = item.DescriptionShort,
+			Contraints = item.Contraints,
+			Hints = item.Hints,
+			Tests = []
+		}));
 
 		return steps;
 	}
 
-	public static List<ExerciseStepResponse> EntityToStepResponse(List<ExerciseStep> exerciseSteps)
+	private static List<ExerciseStepResponse> EntityToStepResponse(List<ExerciseStep> exerciseSteps)
 	{
 		List<ExerciseStepResponse> steps = [];
-
-		foreach (var item in exerciseSteps)
+		steps.AddRange(exerciseSteps.Select(item => new ExerciseStepResponse()
 		{
-			ExerciseStepResponse step = new()
-			{
-				Id = Guid.NewGuid(),
-				Title = item.Title,
-				Description = item.Description,
-				DescriptionShort = item.DescriptionShort,
-				Contraints = item.Contraints,
-				Hints = item.Hints,
-				Tests = item.Tests
-			};
-			steps.Add(step);
-		}
+			Id = Guid.NewGuid(),
+			Title = item.Title,
+			Description = item.Description,
+			DescriptionShort = item.DescriptionShort,
+			Contraints = item.Contraints,
+			Hints = item.Hints,
+			Tests = item.Tests
+		}));
 
 		return steps;
 	}

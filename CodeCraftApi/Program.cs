@@ -2,9 +2,15 @@ global using FastEndpoints;
 global using FastEndpoints.Swagger;
 using CodeCraftApi.Database;
 using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.SignalR;
 using FastEndpoints.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using Scalar.AspNetCore;
+using SignalR.PepR;
 
 namespace CodeCraftApi
 {
@@ -14,8 +20,46 @@ namespace CodeCraftApi
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
+			builder.Logging.AddApplicationInsights().AddAzureWebAppDiagnostics();
+
+			builder.Services.AddMediatR(cfg =>
+			{
+				cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+			});
+
+			builder.Services.AddSignalR()
+				.AddNewtonsoftJsonProtocol(config => config.PayloadSerializerSettings.Converters.Add(new StringEnumConverter(new CamelCaseNamingStrategy())));
+
+			builder.Services.AddHubMethodHandlers([typeof(Program).Assembly]);
+
+			builder.Services.AddSingleton<IUserIdProvider, HubUserIdProvider>();
+
+			builder.Services.AddCors(
+				options =>
+				options.AddDefaultPolicy(
+					p => p.AllowAnyHeader()
+					.AllowAnyMethod()
+					.WithOrigins("http://localhost:5173")
+					.AllowCredentials())
+				);
+
 			builder.Services
-				.AddAuthenticationJwtBearer(s => s.SigningKey = "EgliLoHLLxgdxLBuUH9thsIhkKjA4ieaUm0THxZA4a2yySKW2pYKNbl9mGpHkm1u7KE1UtHmmmtQQdwgPWBRjw==")
+				.AddAuthenticationJwtBearer(s => s.SigningKey = "EgliLoHLLxgdxLBuUH9thsIhkKjA4ieaUm0THxZA4a2yySKW2pYKNbl9mGpHkm1u7KE1UtHmmmtQQdwgPWBRjw==",
+				options => options.Events = new JwtBearerEvents
+				{
+					OnMessageReceived = context =>
+					{
+						var accessToken = context.Request.Query["access_token"];
+						var path = context.HttpContext.Request.Path;
+
+						if (!string.IsNullOrEmpty(accessToken) &&
+						(path.StartsWithSegments("/hub")))
+						{
+							context.Token = accessToken;
+						}
+						return Task.CompletedTask;
+					}
+				})
 				.AddAuthorization()
 				.AddFastEndpoints()
 				.SwaggerDocument(o => o.ShortSchemaNames = true);
@@ -25,12 +69,14 @@ namespace CodeCraftApi
 				{
 					o.MapEnum<ExerciseDifficulty>();
 					o.MapEnum<Role>();
-					o.MapEnum<Status>("status");
+					o.MapEnum<Status>();
 					o.MapEnum<SessionStatus>();
-					o.MapEnum<GroupSize>();
 				}));
 
 			var app = builder.Build();
+
+
+			app.UseCors();
 
 			app.UseAuthentication()
 				.UseAuthorization()
@@ -48,6 +94,8 @@ namespace CodeCraftApi
 					x.Theme = ScalarTheme.DeepSpace;
 				});
 			}
+
+			app.MapHub<AppHub>("/hub");
 
 			app.Run();
 		}

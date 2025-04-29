@@ -6,8 +6,6 @@ public class User
 	public Role Role { get; set; }
 	public Status Status { get; set; }
 	public string UserName { get; set; }
-
-	public List<Group> Groups { get; set; }
 	public List<Session> Sessions { get; set; } = [];
 }
 
