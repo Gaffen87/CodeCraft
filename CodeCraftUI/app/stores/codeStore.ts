@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import defaultCode from "./code.txt?raw";
 
 interface CodeState {
 	code: string;
@@ -8,17 +9,7 @@ interface CodeState {
 }
 
 export const useCodeStore = create<CodeState>()((set) => ({
-	code: `using System;
-
-class Program
-{
-	public static void Main()
-	{
-		Console.WriteLine("Hello, World!");
-	}
-}
-		
-`,
+	code: defaultCode,
 	console: "",
 	setCode: (code) => set({ code }),
 	setConsole: (console) => set({ console }),

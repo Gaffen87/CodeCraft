@@ -3,6 +3,7 @@ import Editor from "./components/editor";
 import { useCodeStore } from "~/stores/codeStore";
 import useSubmitCode from "~/hooks/useSubmitCode";
 import { Label } from "@radix-ui/react-dropdown-menu";
+import Console from "./components/console";
 
 export default function Session() {
 	const { console } = useCodeStore();
@@ -19,16 +20,7 @@ export default function Session() {
 			>
 				{loading ? "Loading..." : "Run Code"}
 			</Button>
-			<div className="p-2">
-				<Label className="text-2xl font-bold mt-1">Console</Label>
-				<p className="text-sm text-muted-foreground mt-2">
-					You can use the console to see the output of your code.
-				</p>
-				<textarea
-					className="w-full h-20 resize-none border-2 border-foreground/25 rounded-md p-2 mt-2 bg-background text-foreground"
-					value={console}
-				/>
-			</div>
+			<Console className="p-2" />
 		</div>
 	);
 }
