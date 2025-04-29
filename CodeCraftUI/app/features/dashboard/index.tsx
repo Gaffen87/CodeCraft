@@ -8,11 +8,12 @@ export default function Dashboard() {
 
 	return (
 		<div className="w-full h-full flex flex-col p-2">
-			{user?.user_metadata.role === "student" ? (
+			{/* {user?.user_metadata.role === "student" ? (
 				<StudentDashboard />
 			) : (
 				<TeacherDashboard />
-			)}
+			)} */}
+			<TeacherDashboard />
 		</div>
 	);
 }
