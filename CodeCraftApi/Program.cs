@@ -39,7 +39,7 @@ namespace CodeCraftApi
 				options.AddDefaultPolicy(
 					p => p.AllowAnyHeader()
 					.AllowAnyMethod()
-					.WithOrigins("http://localhost:5173")
+					.WithOrigins("http://localhost:5173", "https://code-craft-ecru.vercel.app")
 					.AllowCredentials())
 				);
 
