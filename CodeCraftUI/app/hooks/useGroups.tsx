@@ -3,12 +3,13 @@ import { useGroupStore } from "~/stores/groupStore";
 import type { AddToGroupPayload } from "~/types/types";
 import useSignalR from "~/hooks/useSignalR";
 
-export function useGroups() {
+export default function useGroups() {
 	const { setGroups } = useGroupStore();
 	const { connection } = useSignalR();
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(false);
 
 	async function fetchGroups() {
+		setLoading(true);
 		try {
 			const res = await fetch("https://localhost:7060/groups");
 			const data = await res.json();
@@ -34,7 +35,9 @@ export function useGroups() {
 	}
 
 	async function addToGroup(payload: AddToGroupPayload) {
+		setLoading(true);
 		await connection?.invoke("InvokeMethod", "AddToGroup", payload);
+		setLoading(false);
 	}
 
 	return { loading, fetchGroups, addToGroup };
