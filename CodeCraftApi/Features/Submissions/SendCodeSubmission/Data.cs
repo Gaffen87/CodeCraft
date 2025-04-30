@@ -7,16 +7,16 @@ namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
 
 internal sealed class Data
 {
-	public async static Task SaveCodeSubmission(AppDbContext dbContext, CodeSubmission code, Guid groupId, Guid stepId)
+	public async static Task SaveCodeSubmission(AppDbContext dbContext, CodeSubmission code, Group group, ExerciseStep step)
 	{
-		code.SubmittedBy = await GetGroup(dbContext, groupId);
-		code.ExerciseStep = await GetExerciseStep(dbContext, stepId);
+		code.SubmittedBy = group;
+		code.ExerciseStep = step;
 
 		await dbContext.Submissions.AddAsync(code);
 		await dbContext.SaveChangesAsync();
 	}
 
-	private async static Task<Group> GetGroup(AppDbContext dbContext, Guid id)
+	public async static Task<Group> GetGroup(AppDbContext dbContext, Guid id)
 	{
 		return await dbContext.Groups.SingleOrDefaultAsync(g => g.Id == id);
 	}

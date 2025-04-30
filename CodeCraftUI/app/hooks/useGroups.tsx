@@ -11,7 +11,7 @@ export default function useGroups() {
 	async function fetchGroups() {
 		setLoading(true);
 		try {
-			const res = await fetch("https://localhost:7060/groups");
+			const res = await fetch(import.meta.env.VITE_API_URL + "/groups");
 			const data = await res.json();
 			console.log("Fetched groups:", data);
 			if (res.ok) {
@@ -40,5 +40,22 @@ export default function useGroups() {
 		setLoading(false);
 	}
 
-	return { loading, fetchGroups, addToGroup };
+	async function getSubmissions(groupId: string) {
+		setLoading(true);
+		try {
+			const res = await fetch(
+				import.meta.env.VITE_API_URL + `/code/submissions/${groupId}`
+			);
+			console.log(res);
+			const data = await res.json();
+			console.log("Fetched submissions:", data);
+			return data.submissionResults;
+		} catch (err) {
+			console.error("Failed to fetch submissions:", err);
+		} finally {
+			setLoading(false);
+		}
+	}
+
+	return { loading, fetchGroups, addToGroup, getSubmissions };
 }

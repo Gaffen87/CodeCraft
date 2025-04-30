@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useGroupStore } from "../../../stores/groupStore";
 import useGroups from "~/hooks/useGroups";
 import GroupCard from "./group-card";

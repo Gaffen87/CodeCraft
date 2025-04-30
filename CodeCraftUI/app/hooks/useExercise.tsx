@@ -8,12 +8,15 @@ export default function useExercise({ exerciseId }) {
 	useEffect(() => {
 		const fetchExercise = async () => {
 			try {
-				const response = await fetch("https://localhost:7060/api/exercise/1", {
-					method: "GET",
-					headers: {
-						"Content-Type": "application/json",
-					},
-				});
+				const response = await fetch(
+					import.meta.env.VITE_API_URL + "/api/exercise/1",
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+						},
+					}
+				);
 				if (!response.ok) {
 					throw new Error("Network response was not ok");
 				}

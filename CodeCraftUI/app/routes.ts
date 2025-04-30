@@ -9,7 +9,7 @@ import {
 export default [
 	layout("./shared/protected-layout.tsx", [
 		index("./features/dashboard/index.tsx"),
-		...prefix("/session", [index("./features/session/index.tsx")]),
+		...prefix("/session", [route(":groupId", "./features/session/index.tsx")]),
 		...prefix("/groups", [index("./features/groups/test.tsx")]),
 		...prefix("/exercises", [
 			layout("./features/exercises/layout.tsx", [
