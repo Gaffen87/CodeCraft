@@ -7,18 +7,37 @@ import {
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
+import { Badge } from "~/components/ui/badge";
 import type { Group } from "~/types/types";
 import useGroups from "~/hooks/useGroups";
 import useAuth from "~/hooks/useAuth";
+import { useNavigate } from "react-router";
+import { useEffect, useState } from "react";
 
 export default function GroupCard({ group }: { group: Group }) {
-	const { addToGroup, loading } = useGroups();
+	const { addToGroup, getSubmissions, loading } = useGroups();
 	const { user } = useAuth();
+	const [submissions, setSubmissions] = useState([]);
 	const isMember = group.members?.some((member) => member.id === user?.id);
-	console.log("isMember", isMember);
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		const fetchSubmissions = async () => {
+			const submissions = await getSubmissions(group.id);
+			setSubmissions(submissions);
+		};
+		fetchSubmissions();
+	}, []);
 
 	return (
-		<Card className="w-[350px]">
+		<Card className="w-[350px] relative">
+			{submissions && submissions.length > 0 && (
+				<>
+					<Badge className="absolute -top-2 -right-2">
+						Submissions: {submissions.length}
+					</Badge>
+				</>
+			)}
 			<CardHeader>
 				<CardTitle>{group.name}</CardTitle>
 				<CardDescription>members</CardDescription>
@@ -34,6 +53,7 @@ export default function GroupCard({ group }: { group: Group }) {
 						disabled={loading}
 						onClick={() => {
 							addToGroup({ groupName: group.name });
+							navigate("/session/" + group.id);
 						}}
 					>
 						Join

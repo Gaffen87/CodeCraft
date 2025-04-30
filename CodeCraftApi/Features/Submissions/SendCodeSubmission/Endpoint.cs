@@ -20,15 +20,16 @@ internal sealed class Endpoint(AppDbContext dbContext) : Endpoint<CodeSubmission
 		string result = await ProcessCodeSubmission(r);
 		submission.Result = result;
 
-		await Data.SaveCodeSubmission(dbContext, submission, r.SubmittedBy, r.ExerciseStep);
+		var group = await Data.GetGroup(dbContext, r.SubmittedBy);
+		var step = await Data.GetExerciseStep(dbContext, r.ExerciseStep);
+		await Data.SaveCodeSubmission(dbContext, submission, group, step);
 
 		await new CodeSubmittedEvent
 		(
-			submission.Id,
-			submission.SubmittedBy.Id,
-			submission.SubmittedBy.Name,
-			submission.ExerciseStep.Id,
-			result
+			group.Id,
+			group.Name,
+			step.Title,
+			submission.Result
 		).PublishAsync(cancellation: c);
 
 		await SendAsync(new CodeSubmissionResponse { Result = result });

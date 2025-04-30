@@ -3,7 +3,9 @@ import { createContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { useMessageStore } from "~/stores/messageStore";
 import { useGroupStore } from "~/stores/groupStore";
-import type { Group, GroupMessage, Message } from "~/types/types";
+import type { Message } from "~/types/types";
+import { toast } from "sonner";
+import { useNavigate } from "react-router";
 
 interface SignalRContextType {
 	connection: HubConnection | null;
@@ -25,12 +27,13 @@ export default function SignalRProvider({
 	const { addMessage } = useMessageStore();
 	const { addGroup, removeGroup, addMember, removeMember } = useGroupStore();
 	const { session } = useAuth();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (!session?.access_token) return;
 
 		const newConnection = new HubConnectionBuilder()
-			.withUrl("https://localhost:7060/hub", {
+			.withUrl(import.meta.env.VITE_API_URL + "/hub", {
 				accessTokenFactory: () => session.access_token,
 			})
 			.withAutomaticReconnect()
@@ -49,6 +52,19 @@ export default function SignalRProvider({
 		newConnection.on("ReceiveMessage", (message: Message) => {
 			addMessage(message);
 			console.log("Received message:", message);
+		});
+
+		newConnection.on("ReceiveCodeMessage", (message) => {
+			toast.info(`Code submitted by ${message.groupName}`, {
+				description: `Result: ${message.codeResult}`,
+				duration: 10000,
+				action: {
+					label: "Go to",
+					onClick: () => {
+						navigate("/session/" + message.groupId);
+					},
+				},
+			});
 		});
 
 		newConnection.on("ReceiveGroupMessage", (message) => {

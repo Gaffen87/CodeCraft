@@ -5,6 +5,7 @@ import type { Group, User } from "~/types/types";
 type GroupState = {
 	groups: Group[];
 	setGroups: (groups: Group[]) => void;
+	getGroupId: (groupName: string) => string | undefined;
 	addGroup: (group: Group) => void;
 	removeGroup: (groupId: string) => void;
 	addMember: (groupId: string, user: User) => void;
@@ -13,9 +14,16 @@ type GroupState = {
 
 export const useGroupStore = create<GroupState>()(
 	persist(
-		(set) => ({
+		(set, get) => ({
 			groups: [],
 			setGroups: (groups) => set({ groups }),
+			getGroupId: (groupName) => {
+				const group = get().groups.find((group) => group.name === groupName);
+				if (group) {
+					return group.id;
+				}
+				return undefined;
+			},
 			addGroup: (newGroup) =>
 				set((state) => {
 					if (state.groups.some((group) => group.id === newGroup.id)) {

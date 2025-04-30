@@ -42,8 +42,6 @@ export default function Editor({ className }: { className?: string }) {
 			setCode(newCode);
 		});
 
-		console.log(theme);
-
 		return () => editor?.dispose();
 	}, [monacoRef.current]);
 
