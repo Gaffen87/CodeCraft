@@ -13,11 +13,15 @@ import AuthProvider from "./contexts/authContext";
 import { ThemeProvider } from "./contexts/themeContext";
 import SignalRProvider from "./contexts/signalrContext";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
-import { AppSidebar } from "./components/ui/app-sidebar";
+import { ImSpinner3 } from "react-icons/im";
 
-// export function HydrateFallback() {
-// 	return <h1>Loading...</h1>;
-// }
+export function HydrateFallback() {
+	return (
+		<div className="h-screen w-screen flex items-center justify-center">
+			<ImSpinner3 className="animate-spin text-4xl" />
+		</div>
+	);
+}
 
 export const links: Route.LinksFunction = () => [
 	{ rel: "preconnect", href: "https://fonts.googleapis.com" },

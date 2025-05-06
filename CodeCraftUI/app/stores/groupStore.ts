@@ -11,6 +11,7 @@ type GroupState = {
 	removeGroup: (groupId: string) => void;
 	addMember: (groupId: string, user: User) => void;
 	removeMember: (groupId: string, userId: string) => void;
+	clearMember: (userId: string) => void;
 };
 
 export const useGroupStore = create<GroupState>()(
@@ -71,6 +72,18 @@ export const useGroupStore = create<GroupState>()(
 				set((state) => {
 					const updatedGroups = state.groups.map((group) => {
 						if (group.id !== groupId) return group;
+						return {
+							...group,
+							members: group.members.filter((member) => member.id !== userId),
+						};
+					});
+					return {
+						groups: updatedGroups,
+					};
+				}),
+			clearMember: (userId) =>
+				set((state) => {
+					const updatedGroups = state.groups.map((group) => {
 						return {
 							...group,
 							members: group.members.filter((member) => member.id !== userId),

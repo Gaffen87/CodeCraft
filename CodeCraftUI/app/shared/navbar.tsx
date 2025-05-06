@@ -9,10 +9,18 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "~/components/ui/tooltip";
+import useSignalR from "~/hooks/useSignalR";
 import { SidebarTrigger } from "~/components/ui/sidebar";
 
 export default function Navbar() {
 	const { user, signOut } = useAuth();
+	const { isConnected } = useSignalR();
 
 	return (
 		<div className="bg-sidebar px-4 py-4 flex items-center border-b-foreground/25 border-b w-full flex-none sticky top-0 z-50">
@@ -39,14 +47,16 @@ export default function Navbar() {
 					Exercises
 				</NavLink>
 			</nav>
-			<div className="ml-auto flex items-center space-x-4">
+			<div className="ml-auto flex items-center space-x-4 relative">
 				<ModeToggle />
 				<Popover>
 					<PopoverTrigger>
-						<Avatar className="w-10 h-10">
-							<AvatarImage src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg" />
-							<AvatarFallback>CC</AvatarFallback>
-						</Avatar>
+						<div className="relative">
+							<Avatar className="w-10 h-10">
+								<AvatarImage src="https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg" />
+								<AvatarFallback>CC</AvatarFallback>
+							</Avatar>
+						</div>
 					</PopoverTrigger>
 					<PopoverContent className="w-48 mr-3 flex flex-col">
 						<p>{user?.user_metadata.user_name}</p>
@@ -56,6 +66,20 @@ export default function Navbar() {
 						</Button>
 					</PopoverContent>
 				</Popover>
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<div
+								className={`rounded-full h-3 w-3 z-10 absolute top-0 right-3 ${
+									isConnected ? "bg-green-800" : "bg-red-600 animate-bounce"
+								}`}
+							/>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>{isConnected ? "Connected" : "Disconnected"}</p>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
 			</div>
 		</div>
 	);
