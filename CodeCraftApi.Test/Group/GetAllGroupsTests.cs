@@ -16,7 +16,7 @@ public class GetAllGroupsTests
 
         await using var context = new AppDbContext(options);
         ArgumentException.ThrowIfNullOrEmpty(nameof(context));
-
+//
         var group1 = new Group
         {
             Id = Guid.NewGuid(),
