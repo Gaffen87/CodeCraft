@@ -16,7 +16,7 @@ import { useSubmitStore } from "~/stores/submitStore";
 import { useEffect, useState } from "react";
 
 export default function GroupCard({ group }: { group: Group }) {
-	const { addToGroup, loading, getSubmissionsByGroup } = useGroups();
+	const { loading, getSubmissionsByGroup } = useGroups();
 	const { user } = useAuth();
 	const isMember = group.members?.some((member) => member.id === user?.id);
 	const navigate = useNavigate();
@@ -55,7 +55,6 @@ export default function GroupCard({ group }: { group: Group }) {
 						variant={"default"}
 						disabled={loading}
 						onClick={() => {
-							// addToGroup({ groupName: group.name });
 							navigate("/session/" + group.id);
 						}}
 					>
