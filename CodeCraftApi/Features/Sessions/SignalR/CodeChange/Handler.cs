@@ -8,8 +8,6 @@ internal sealed class EditorChangedHandler(IHubContext<AppHub> hub, ILogger<Edit
 {
 	protected override async Task HandleAsync(HubCallerContext context, CodeChangePayload payload)
 	{
-		logger.LogInformation("EditorChanged");
-
 		await hub.Clients.GroupExcept(payload.GroupName, [context.ConnectionId]).SendCoreAsync("ReceiveEditorMessage", [payload.Changes]);
 	}
 }

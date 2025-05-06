@@ -62,18 +62,40 @@ export default function Editor({
 
 	useEffect(() => {
 		if (editor) {
+			connection?.invoke("InvokeMethod", "GetSession", {
+				groupName,
+			});
+
 			connection?.on("ReceiveEditorMessage", (message) => {
 				isRemoteEdit.current = true;
 
-				console.log("Received code message:", message);
 				editor?.executeEdits("signalR", message);
 
+				isRemoteEdit.current = false;
+			});
+
+			connection?.on("ReceiveGetSessionMessage", (message) => {
+				console.log("Received session message: ", message);
+
+				connection?.invoke("InvokeMethod", "SendEditorValue", {
+					userId: message.userId,
+					editorValue: editor?.getValue(),
+				});
+			});
+
+			connection?.on("ReceiveEditorValueMessage", (message) => {
+				console.log("Received editor value message: ", message);
+
+				isRemoteEdit.current = true;
+				editor?.setValue(message);
 				isRemoteEdit.current = false;
 			});
 		}
 
 		return () => {
 			connection?.off("ReceiveEditorMessage");
+			connection?.off("ReceiveGetSessionMessage");
+			connection?.off("ReceiveEditorValueMessage");
 		};
 	}, [editor]);
 
