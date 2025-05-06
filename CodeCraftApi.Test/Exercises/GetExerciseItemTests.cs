@@ -2,10 +2,8 @@ namespace CodeCraftApi.Test.Exercises;
 
 using Database;
 using Domain.Entities;
-using FakeItEasy;
 using FastEndpoints;
 using Features.Exercises.GetExerciseItem;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Shouldly;
