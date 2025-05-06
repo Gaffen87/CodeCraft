@@ -12,29 +12,32 @@ import type { Group } from "~/types/types";
 import useGroups from "~/hooks/useGroups";
 import useAuth from "~/hooks/useAuth";
 import { useNavigate } from "react-router";
+import { useSubmitStore } from "~/stores/submitStore";
 import { useEffect, useState } from "react";
 
 export default function GroupCard({ group }: { group: Group }) {
-	const { addToGroup, getSubmissions, loading } = useGroups();
+	const { addToGroup, loading, getSubmissionsByGroup } = useGroups();
 	const { user } = useAuth();
-	const [submissions, setSubmissions] = useState([]);
 	const isMember = group.members?.some((member) => member.id === user?.id);
 	const navigate = useNavigate();
+	const { submissions, setGroupSubmissions } = useSubmitStore();
 
 	useEffect(() => {
-		const fetchSubmissions = async () => {
-			const submissions = await getSubmissions(group.id);
-			setSubmissions(submissions);
-		};
+		async function fetchSubmissions() {
+			if (group.id) {
+				const submissions = await getSubmissionsByGroup(group.id);
+				setGroupSubmissions(group.id, submissions);
+			}
+		}
 		fetchSubmissions();
-	}, []);
+	}, [group.id]);
 
 	return (
-		<Card className="w-[350px] relative">
-			{submissions && submissions.length > 0 && (
+		<Card className="w-[300px] relative">
+			{submissions[group.id] && submissions[group.id].length > 0 && (
 				<>
-					<Badge className="absolute -top-2 -right-2">
-						Submissions: {submissions.length}
+					<Badge className="absolute -top-2 -right-2" variant={"destructive"}>
+						Submissions: <span>{submissions[group.id].length}</span>
 					</Badge>
 				</>
 			)}
@@ -52,7 +55,7 @@ export default function GroupCard({ group }: { group: Group }) {
 						variant={"default"}
 						disabled={loading}
 						onClick={() => {
-							addToGroup({ groupName: group.name });
+							// addToGroup({ groupName: group.name });
 							navigate("/session/" + group.id);
 						}}
 					>

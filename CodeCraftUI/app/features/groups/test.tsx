@@ -1,5 +1,5 @@
 import useSignalR from "~/hooks/useSignalR";
-import { AddToGroup, RemoveFromGroup } from "./services/signalr-service";
+import { AddToGroup, RemoveFromGroup } from "../../services/signalr-service";
 import { Button } from "~/components/ui/button";
 import { useEffect } from "react";
 import { useMessageStore } from "~/stores/messageStore";

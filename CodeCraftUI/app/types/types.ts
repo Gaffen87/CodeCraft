@@ -3,6 +3,11 @@ export type User = {
 	name: string;
 };
 
+export type CodeSubmit = {
+	content: string;
+	groupName: string;
+};
+
 export type Group = {
 	id: string;
 	name: string;

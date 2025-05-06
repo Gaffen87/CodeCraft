@@ -1,10 +1,21 @@
+import { useEffect } from "react";
 import { Label } from "~/components/ui/label";
 import { Textarea } from "~/components/ui/textarea";
-
+import useSignalR from "~/hooks/useSignalR";
 import { useCodeStore } from "~/stores/codeStore";
+import { useEditorStore } from "~/stores/editorStore";
 
 export default function Console({ className }: { className?: string }) {
-	const { console } = useCodeStore();
+	const { console, setConsole } = useCodeStore();
+	const { connection } = useSignalR();
+
+	useEffect(() => {
+		if (connection) {
+			connection.on("ReceiveConsoleMessage", (message) => {
+				setConsole(message);
+			});
+		}
+	}, [connection]);
 
 	return (
 		<div className={className}>

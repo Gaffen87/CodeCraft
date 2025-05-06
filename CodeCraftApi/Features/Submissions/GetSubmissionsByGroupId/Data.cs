@@ -8,6 +8,6 @@ internal sealed class Data
 {
 	public async static Task<List<CodeSubmission>> GetSubmissions(AppDbContext dbContext, Guid groupId)
 	{
-		return await dbContext.Submissions.Where(x => x.SubmittedBy.Id == groupId).ToListAsync();
+		return await dbContext.Submissions.Include(g => g.SubmittedBy).Where(x => x.SubmittedBy.Id == groupId).ToListAsync();
 	}
 }

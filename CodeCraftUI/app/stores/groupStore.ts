@@ -6,6 +6,7 @@ type GroupState = {
 	groups: Group[];
 	setGroups: (groups: Group[]) => void;
 	getGroupId: (groupName: string) => string | undefined;
+	getGroupName: (groupId: string) => string | undefined;
 	addGroup: (group: Group) => void;
 	removeGroup: (groupId: string) => void;
 	addMember: (groupId: string, user: User) => void;
@@ -21,6 +22,13 @@ export const useGroupStore = create<GroupState>()(
 				const group = get().groups.find((group) => group.name === groupName);
 				if (group) {
 					return group.id;
+				}
+				return undefined;
+			},
+			getGroupName: (groupId) => {
+				const group = get().groups.find((group) => group.id === groupId);
+				if (group) {
+					return group.name;
 				}
 				return undefined;
 			},
@@ -61,25 +69,21 @@ export const useGroupStore = create<GroupState>()(
 				}),
 			removeMember: (groupId, userId) =>
 				set((state) => {
-					const targetGroup = state.groups.find((g) => g.id === groupId);
-					if (targetGroup) {
-						targetGroup.members = targetGroup.members.filter(
-							(member) => member.id !== userId
-						);
+					const updatedGroups = state.groups.map((group) => {
+						if (group.id !== groupId) return group;
 						return {
-							groups: state.groups.map((currentGroup) =>
-								currentGroup.id === groupId ? targetGroup : currentGroup
-							),
+							...group,
+							members: group.members.filter((member) => member.id !== userId),
 						};
-					}
+					});
 					return {
-						groups: state.groups,
+						groups: updatedGroups,
 					};
 				}),
 		}),
 		{
 			name: "group-store",
-			storage: createJSONStorage(() => sessionStorage),
+			storage: createJSONStorage(() => localStorage),
 		}
 	)
 );
