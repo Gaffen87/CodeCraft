@@ -17,5 +17,12 @@ internal sealed class Request
 
 internal sealed class Response
 {
-	public List<string> SubmissionResults { get; set; }
+	public List<Submission> Submissions { get; set; }
+}
+
+internal sealed class Submission
+{
+	public string Content { get; set; }
+	public Guid GroupId { get; set; }
+	public string GroupName { get; set; }
 }

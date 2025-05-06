@@ -7,8 +7,6 @@ public class GroupCreatedHandler(IHubContext<AppHub> hubContext, ILogger<GroupCr
 {
 	public async Task HandleAsync(GroupCreatedEvent eventModel, CancellationToken ct)
 	{
-		logger.LogInformation("Group created | Name: {GroupName}", eventModel.GroupName);
-
 		await hubContext.Clients.All.SendCoreAsync("ReceiveGroupMessage", [eventModel]);
 	}
 }

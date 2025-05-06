@@ -1,4 +1,5 @@
 ﻿using CodeCraftApi.Database;
+using CodeCraftApi.Domain.DomainEvents;
 using CodeCraftApi.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,10 +15,12 @@ public class Data
 
 		group.Members.Remove(user);
 
-		if (group.Members.Count == 0)
-		{
-			context.Groups.Remove(group);
-		}
+		await new UserLeftGroupEvent(group.Id, user.Id).PublishAsync();
+
+		//if (group.Members.Count == 0)
+		//{
+		//	context.Groups.Remove(group);
+		//}
 
 		await context.SaveChangesAsync();
 

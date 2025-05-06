@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useEditorStore } from "~/stores/editorStore";
 
-type Theme = "dark" | "light" | "system";
+type Theme = "dark" | "light";
 
 type ThemeProviderProps = {
 	children: React.ReactNode;
@@ -29,21 +30,12 @@ export function ThemeProvider({
 	const [theme, setTheme] = useState<Theme>(
 		() => (localStorage.getItem(storageKey) as Theme) || defaultTheme
 	);
+	const setEditorTheme = useEditorStore((state) => state.setEditorTheme);
 
 	useEffect(() => {
 		const root = window.document.documentElement;
 
 		root.classList.remove("light", "dark");
-
-		// if (theme === "system") {
-		// 	const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-		// 		.matches
-		// 		? "dark"
-		// 		: "light";
-
-		// 	root.classList.add(systemTheme);
-		// 	return;
-		// }
 
 		root.classList.add(theme);
 	}, [theme]);
@@ -52,6 +44,8 @@ export function ThemeProvider({
 		theme,
 		setTheme: (theme: Theme) => {
 			localStorage.setItem(storageKey, theme);
+			const editorTheme = theme === "dark" ? "vs-dark" : "vs";
+			setEditorTheme(editorTheme);
 			setTheme(theme);
 		},
 	};

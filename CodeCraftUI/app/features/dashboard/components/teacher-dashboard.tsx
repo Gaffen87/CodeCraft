@@ -26,12 +26,12 @@ export default function TeacherDashboard() {
 			>
 				Create Group
 			</Button>
-			<div className="grid grid-cols-3 mt-10 ">
+			<div className="grid xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 grid-cols-1 mt-10">
 				{loading ? (
 					<p>Loading...</p>
 				) : groups && Array.isArray(groups) && groups.length > 0 ? (
 					groups.map((group) => (
-						<div className="w-1/3 p-4" key={group.id}>
+						<div className="p-4" key={group.id}>
 							<GroupCard group={group} />
 						</div>
 					))

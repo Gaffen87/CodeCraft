@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useGroupStore } from "~/stores/groupStore";
-import type { AddToGroupPayload } from "~/types/types";
+import type { AddToGroupPayload, RemoveFromGroupPayload } from "~/types/types";
 import useSignalR from "~/hooks/useSignalR";
+import * as monaco from "monaco-editor";
 
 export default function useGroups() {
 	const { setGroups } = useGroupStore();
@@ -13,7 +14,6 @@ export default function useGroups() {
 		try {
 			const res = await fetch(import.meta.env.VITE_API_URL + "/groups");
 			const data = await res.json();
-			console.log("Fetched groups:", data);
 			if (res.ok) {
 				var groups = data.groups.map((group: any) => {
 					return {
@@ -40,16 +40,27 @@ export default function useGroups() {
 		setLoading(false);
 	}
 
-	async function getSubmissions(groupId: string) {
+	async function removeFromGroup(payload: RemoveFromGroupPayload) {
+		setLoading(true);
+		await connection?.invoke("InvokeMethod", "RemoveFromGroup", payload);
+		setLoading(false);
+	}
+
+	async function codeChange(payload: {
+		changes: monaco.editor.IModelContentChange[];
+		groupName: string;
+	}) {
+		await connection?.invoke("InvokeMethod", "EditorChanged", payload);
+	}
+
+	async function getSubmissionsByGroup(groupId: string) {
 		setLoading(true);
 		try {
 			const res = await fetch(
 				import.meta.env.VITE_API_URL + `/code/submissions/${groupId}`
 			);
-			console.log(res);
 			const data = await res.json();
-			console.log("Fetched submissions:", data);
-			return data.submissionResults;
+			return data.submissions;
 		} catch (err) {
 			console.error("Failed to fetch submissions:", err);
 		} finally {
@@ -57,5 +68,12 @@ export default function useGroups() {
 		}
 	}
 
-	return { loading, fetchGroups, addToGroup, getSubmissions };
+	return {
+		loading,
+		fetchGroups,
+		addToGroup,
+		removeFromGroup,
+		getSubmissionsByGroup,
+		codeChange,
+	};
 }

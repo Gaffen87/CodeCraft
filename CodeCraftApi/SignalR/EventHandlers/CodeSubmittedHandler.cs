@@ -10,5 +10,7 @@ public class CodeSubmittedHandler(IHubContext<AppHub> hubContext, ILogger<CodeSu
 		logger.LogInformation("Code Submitted | Result: {CodeResult}", eventModel.CodeResult);
 
 		await hubContext.Clients.All.SendCoreAsync("ReceiveCodeMessage", [eventModel]);
+
+		await hubContext.Clients.Group(eventModel.GroupName).SendCoreAsync("ReceiveConsoleMessage", [eventModel.CodeResult]);
 	}
 }

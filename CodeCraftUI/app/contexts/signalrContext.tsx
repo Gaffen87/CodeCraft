@@ -6,6 +6,7 @@ import { useGroupStore } from "~/stores/groupStore";
 import type { Message } from "~/types/types";
 import { toast } from "sonner";
 import { useNavigate } from "react-router";
+import { useSubmitStore } from "~/stores/submitStore";
 
 interface SignalRContextType {
 	connection: HubConnection | null;
@@ -26,6 +27,7 @@ export default function SignalRProvider({
 	const [isConnected, setIsConnected] = useState(false);
 	const { addMessage } = useMessageStore();
 	const { addGroup, removeGroup, addMember, removeMember } = useGroupStore();
+	const { addCodeSubmit } = useSubmitStore();
 	const { session } = useAuth();
 	const navigate = useNavigate();
 
@@ -55,6 +57,10 @@ export default function SignalRProvider({
 		});
 
 		newConnection.on("ReceiveCodeMessage", (message) => {
+			addCodeSubmit(message.groupId, {
+				groupName: message.groupName,
+				content: message.codeResult,
+			});
 			toast.info(`Code submitted by ${message.groupName}`, {
 				description: `Result: ${message.codeResult}`,
 				duration: 10000,
