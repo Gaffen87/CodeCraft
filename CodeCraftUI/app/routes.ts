@@ -9,7 +9,6 @@ import {
 export default [
 	layout("./shared/protected-layout-navbar.tsx", [
 		index("./features/dashboard/index.tsx"),
-		...prefix("/groups", [index("./features/groups/test.tsx")]),
 		...prefix("/exercises", [
 			layout("./features/exercises/layout.tsx", [
 				index("./features/exercises/components/exercise-dashboard.tsx"),
