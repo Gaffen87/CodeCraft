@@ -10,7 +10,6 @@ internal sealed class Mapper : Mapper<CodeSubmissionRequest, CodeSubmissionRespo
 		{
 			Id = Guid.NewGuid(),
 			SubmitDate = DateTimeOffset.UtcNow,
-			IsSuccess = true,
 			Files = FilesToEntity(r.Files),
 		};
 	}

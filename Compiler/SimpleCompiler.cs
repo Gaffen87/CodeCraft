@@ -6,7 +6,7 @@ using System.Text;
 namespace Compiler;
 public partial class SimpleCompiler
 {
-	public static async Task<string> CodeRunner(Dictionary<string, string> codeFiles)
+	public static async Task<Dictionary<bool, string>> CodeRunner(Dictionary<string, string> codeFiles)
 	{
 		string tempProjectPath = Path.Combine(Path.GetTempPath(), "CSharpExecution");
 		Directory.CreateDirectory(tempProjectPath);
@@ -21,7 +21,7 @@ public partial class SimpleCompiler
 		return CompileAndRun(tempProjectPath);
 	}
 
-	private static string CompileAndRun(string path)
+	private static Dictionary<bool, string> CompileAndRun(string path)
 	{
 		var sourceFiles = Directory.GetFiles(path, "*.cs");
 		var syntaxTrees = sourceFiles.Select(file
@@ -48,7 +48,10 @@ public partial class SimpleCompiler
 				.Where(diagnostic => diagnostic.Severity == DiagnosticSeverity.Error)
 				.Select(diagnostic => diagnostic.ToString()));
 
-			return $"Compilation failed:\n{errors}";
+			return new()
+			{
+				{ false, $"Compilation failed:\n{errors}" }
+			};
 		}
 
 		ms.Seek(0, SeekOrigin.Begin);
@@ -65,6 +68,9 @@ public partial class SimpleCompiler
 				method.Invoke(null, null);
 		}
 
-		return outputBuilder.ToString();
+		return new()
+		{
+			{ true, outputBuilder.ToString() }
+		};
 	}
 }

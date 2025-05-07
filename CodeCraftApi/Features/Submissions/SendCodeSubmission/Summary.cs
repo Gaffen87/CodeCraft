@@ -33,7 +33,7 @@ public class Helper
 }"
 			}],
 			ExerciseStep = Guid.Parse("ae487a06-a508-4191-9f22-faae7f9463ba"),
-			SubmittedBy = Guid.Parse("a2e663d4-373c-4f65-b814-908a83c16e2c")
+			SubmittedBy = Guid.Parse("896f814d-ad72-46fb-861d-c40273b86cc2")
 		};
 	}
 }
