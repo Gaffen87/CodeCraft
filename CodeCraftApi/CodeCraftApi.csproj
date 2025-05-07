@@ -36,7 +36,6 @@
 
 	<ItemGroup>
 		<Folder Include="Features\Tests\" />
-		<Folder Include="Features\Users\SignIn\" />
 	</ItemGroup>
 
 	<ItemGroup>

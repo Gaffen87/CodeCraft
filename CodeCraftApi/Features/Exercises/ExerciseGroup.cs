@@ -1,6 +1,6 @@
 ﻿namespace CodeCraftApi.Features.Exercises;
 
-public class ExerciseGroup : FastEndpoints.Group
+internal sealed class ExerciseGroup : FastEndpoints.Group
 {
 	public ExerciseGroup()
 	{
