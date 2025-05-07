@@ -31,5 +31,6 @@ public class CodeFileRequest
 
 internal sealed class CodeSubmissionResponse
 {
+	public bool isSuccess { get; set; }
 	public string Result { get; set; }
 }

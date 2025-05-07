@@ -15,27 +15,30 @@ internal sealed class Endpoint(AppDbContext dbContext) : Endpoint<CodeSubmission
 
 	public override async Task HandleAsync(CodeSubmissionRequest r, CancellationToken c)
 	{
-		var submission = Map.ToEntity(r);
+		var compilerResult = await ProcessCodeSubmission(r);
 
-		string result = await ProcessCodeSubmission(r);
-		submission.Result = result;
+		var submission = Map.ToEntity(r);
+		submission.IsSuccess = compilerResult.Keys.First();
+		submission.Result = compilerResult.Values.First();
 
 		var group = await Data.GetGroup(dbContext, r.SubmittedBy);
 		var step = await Data.GetExerciseStep(dbContext, r.ExerciseStep);
-		await Data.SaveCodeSubmission(dbContext, submission, group, step);
+		var dbResult = await Data.SaveCodeSubmission(dbContext, submission, group, step);
 
 		await new CodeSubmittedEvent
 		(
 			group.Id,
 			group.Name,
 			step.Title,
-			submission.Result
+			submission.Result,
+			compilerResult.Keys.First(),
+			dbResult.SubmitDate
 		).PublishAsync(cancellation: c);
 
-		await SendAsync(new CodeSubmissionResponse { Result = result });
+		await SendAsync(new CodeSubmissionResponse { Result = compilerResult.Values.First(), isSuccess = compilerResult.Keys.First() });
 	}
 
-	private static async Task<string> ProcessCodeSubmission(CodeSubmissionRequest r)
+	private static async Task<Dictionary<bool, string>> ProcessCodeSubmission(CodeSubmissionRequest r)
 	{
 		Dictionary<string, string> codeFiles = [];
 		foreach (var file in r.Files)

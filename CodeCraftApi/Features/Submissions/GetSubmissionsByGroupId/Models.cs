@@ -23,6 +23,7 @@ internal sealed class Response
 internal sealed class Submission
 {
 	public string Content { get; set; }
-	public Guid GroupId { get; set; }
 	public string GroupName { get; set; }
+	public DateTimeOffset TimeStamp { get; set; }
+	public bool IsSuccess { get; set; }
 }
