@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
 
-public class Data
+internal sealed class Data
 {
 	public async static Task<List<User>> RemoveUserFromGroup(AppDbContext context, string groupName, string userId)
 	{

@@ -60,6 +60,8 @@ export default function SignalRProvider({
 			addCodeSubmit(message.groupId, {
 				groupName: message.groupName,
 				content: message.codeResult,
+				isSuccess: message.isSuccess,
+				timestamp: message.timeStamp,
 			});
 			toast.info(`Code submitted by ${message.groupName}`, {
 				description: `Result: ${message.codeResult}`,

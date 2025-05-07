@@ -15,7 +15,7 @@ internal sealed class CodeSubmissionRequest
 	}
 }
 
-public class CodeFileRequest
+internal sealed class CodeFileRequest
 {
 	public string FileName { get; set; }
 	public string Content { get; set; }
@@ -31,5 +31,6 @@ public class CodeFileRequest
 
 internal sealed class CodeSubmissionResponse
 {
+	public bool isSuccess { get; set; }
 	public string Result { get; set; }
 }

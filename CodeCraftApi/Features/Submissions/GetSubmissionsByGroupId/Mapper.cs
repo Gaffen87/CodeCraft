@@ -10,8 +10,9 @@ internal sealed class Mapper : Mapper<Request, Response, List<CodeSubmission>>
 			Submissions = e.ConvertAll(submission => new Submission()
 			{
 				Content = submission.Result,
-				GroupId = submission.SubmittedBy.Id,
 				GroupName = submission.SubmittedBy.Name,
+				TimeStamp = submission.SubmitDate,
+				IsSuccess = submission.IsSuccess
 			})
 		};
 }

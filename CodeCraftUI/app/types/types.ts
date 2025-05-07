@@ -6,6 +6,8 @@ export type User = {
 export type CodeSubmit = {
 	content: string;
 	groupName: string;
+	isSuccess: boolean;
+	timestamp: Date;
 };
 
 export type Group = {
