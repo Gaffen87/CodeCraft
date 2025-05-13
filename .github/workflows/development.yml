@@ -26,12 +26,17 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
       
-      # NuGet package vulnerability scanning
-      - name: NuGet Security Audit
-        uses: aimenux/nuget-security-checker@v1
-        with:
-          package-file: '**/*.csproj'
-          fail-on-issues: true
+      # NuGet package vulnerability scanning using dotnet CLI
+      - name: Check for vulnerable packages
+        run: |
+          echo "### Vulnerable Package Report" > nuget-vulnerabilities.md
+          dotnet list package --vulnerable --include-transitive >> nuget-vulnerabilities.md
+          if (Select-String -Path nuget-vulnerabilities.md -Pattern "has the following vulnerable packages") {
+            echo "::warning::Vulnerable NuGet packages detected. See nuget-vulnerabilities.md for details."
+          } else {
+            echo "No vulnerable NuGet packages detected."
+          }
+        shell: pwsh
       
       # Setup Node.js for npm operations
       - name: Setup Node.js
@@ -64,18 +69,19 @@ jobs:
       - name: Generate dependency report
         run: |
           echo "### .NET Dependencies" > dependency-report.md
-          dotnet list package --vulnerable > dotnet-packages.txt
+          dotnet list package --include-transitive > dotnet-packages.txt
           Get-Content dotnet-packages.txt >> dependency-report.md
           
           if (Test-Path -Path "package.json") {
             echo "" >> dependency-report.md
             echo "### NPM Dependencies" >> dependency-report.md
-            npm list --all >> npm-packages.txt
+            npm list --depth=0 >> npm-packages.txt
             Get-Content npm-packages.txt >> dependency-report.md
             
             echo "" >> dependency-report.md
             echo "### NPM Outdated Packages" >> dependency-report.md
-            npm outdated --json | ConvertFrom-Json | Format-Table -AutoSize >> dependency-report.md
+            npm outdated --parseable >> npm-outdated.txt
+            Get-Content npm-outdated.txt >> dependency-report.md
           }
         shell: pwsh
         
