@@ -1,0 +1,87 @@
+name: Build, Test, and Audit
+on:
+  push:
+    branches:
+      - development
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read  # This is required for actions/checkout
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '3.1'
+          
+      - name: Build with dotnet
+        run: dotnet build --configuration Release
+      
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
+        
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      
+      # NuGet package vulnerability scanning
+      - name: NuGet Security Audit
+        uses: aimenux/nuget-security-checker@v1
+        with:
+          package-file: '**/*.csproj'
+          fail-on-issues: true
+      
+      # Setup Node.js for npm operations
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      # Install npm dependencies if package.json exists
+      - name: Install npm dependencies
+        run: |
+          if (Test-Path -Path "package.json") {
+            npm ci
+          } else {
+            echo "No package.json found, skipping npm install"
+          }
+        shell: pwsh
+      
+      # Run npm audit
+      - name: npm audit
+        run: |
+          if (Test-Path -Path "package.json") {
+            npm audit
+          } else {
+            echo "No package.json found, skipping npm audit"
+          }
+        shell: pwsh
+        continue-on-error: true  # Prevents the workflow from failing if vulnerabilities are found
+      
+      # Generate dependency report
+      - name: Generate dependency report
+        run: |
+          echo "### .NET Dependencies" > dependency-report.md
+          dotnet list package --vulnerable > dotnet-packages.txt
+          Get-Content dotnet-packages.txt >> dependency-report.md
+          
+          if (Test-Path -Path "package.json") {
+            echo "" >> dependency-report.md
+            echo "### NPM Dependencies" >> dependency-report.md
+            npm list --all >> npm-packages.txt
+            Get-Content npm-packages.txt >> dependency-report.md
+            
+            echo "" >> dependency-report.md
+            echo "### NPM Outdated Packages" >> dependency-report.md
+            npm outdated --json | ConvertFrom-Json | Format-Table -AutoSize >> dependency-report.md
+          }
+        shell: pwsh
+        
+      # Upload dependency report as artifact
+      - name: Upload dependency report
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-report
+          path: dependency-report.md
