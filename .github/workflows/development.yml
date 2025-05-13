@@ -27,16 +27,13 @@ jobs:
         run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
       
       # NuGet package vulnerability scanning using dotnet CLI
-      - name: Check for vulnerable packages
+      - name: Check for outdated NuGet packages
         run: |
-          echo "### Vulnerable Package Report" > nuget-vulnerabilities.md
-          dotnet list package --vulnerable --include-transitive >> nuget-vulnerabilities.md
-          if (Select-String -Path nuget-vulnerabilities.md -Pattern "has the following vulnerable packages") {
-            echo "::warning::Vulnerable NuGet packages detected. See nuget-vulnerabilities.md for details."
-          } else {
-            echo "No vulnerable NuGet packages detected."
-          }
+          echo "### Outdated NuGet Packages" >> dependency-report.md
+          dotnet list package --outdated >> dependency-report.md
+          dotnet list package --outdated >> nuget-outdated.md
         shell: pwsh
+
       
       # Setup Node.js for npm operations
       - name: Setup Node.js
@@ -64,7 +61,17 @@ jobs:
           }
         shell: pwsh
         continue-on-error: true  # Prevents the workflow from failing if vulnerabilities are found
-      
+      # Output outdated NuGet packages to workflow summary
+      - name: Output outdated NuGet packages to summary
+        run: |
+          echo "## Outdated NuGet Packages" >> $GITHUB_STEP_SUMMARY
+          if (Test-Path -Path nuget-outdated.md) {
+            Get-Content nuget-outdated.md >> $GITHUB_STEP_SUMMARY
+          } else {
+            echo "No outdated NuGet package report found." >> $GITHUB_STEP_SUMMARY
+          }
+        shell: pwsh
+
       # Generate dependency report
       - name: Generate dependency report
         run: |
@@ -86,26 +93,21 @@ jobs:
         shell: pwsh
         
       # Output vulnerable package report to GitHub Actions summary
-      - name: Output vulnerabilities to workflow summary
+      - name: Output NPM vulnerabilities to summary
         run: |
-          echo "## NuGet Vulnerability Report" >> $GITHUB_STEP_SUMMARY
-          if (Test-Path -Path nuget-vulnerabilities.md) {
-            Get-Content nuget-vulnerabilities.md >> $GITHUB_STEP_SUMMARY
+          echo "## NPM Audit Results" >> $GITHUB_STEP_SUMMARY
+          $audit = npm audit --json | ConvertFrom-Json
+          if ($audit.metadata.vulnerabilities) {
+            $vuln = $audit.metadata.vulnerabilities
+            echo "Found $($vuln.info + $vuln.low + $vuln.moderate + $vuln.high + $vuln.critical) vulnerabilities:" >> $GITHUB_STEP_SUMMARY
+            echo "- Critical: $($vuln.critical)" >> $GITHUB_STEP_SUMMARY
+            echo "- High: $($vuln.high)" >> $GITHUB_STEP_SUMMARY
+            echo "- Moderate: $($vuln.moderate)" >> $GITHUB_STEP_SUMMARY
+            echo "- Low: $($vuln.low)" >> $GITHUB_STEP_SUMMARY
+            echo "- Info: $($vuln.info)" >> $GITHUB_STEP_SUMMARY
           } else {
-            echo "No NuGet vulnerabilities report found." >> $GITHUB_STEP_SUMMARY
-          }
-          
-          if (Test-Path -Path "package.json") {
-            echo "## NPM Audit Results" >> $GITHUB_STEP_SUMMARY
-            npm audit --json | ConvertFrom-Json | ForEach-Object {
-              $total = $_.metadata.vulnerabilities.info + $_.metadata.vulnerabilities.low + $_.metadata.vulnerabilities.moderate + $_.metadata.vulnerabilities.high + $_.metadata.vulnerabilities.critical
-              echo "Found $total vulnerabilities:" >> $GITHUB_STEP_SUMMARY
-              echo "- Critical: $($_.metadata.vulnerabilities.critical)" >> $GITHUB_STEP_SUMMARY
-              echo "- High: $($_.metadata.vulnerabilities.high)" >> $GITHUB_STEP_SUMMARY
-              echo "- Moderate: $($_.metadata.vulnerabilities.moderate)" >> $GITHUB_STEP_SUMMARY
-              echo "- Low: $($_.metadata.vulnerabilities.low)" >> $GITHUB_STEP_SUMMARY
-              echo "- Info: $($_.metadata.vulnerabilities.info)" >> $GITHUB_STEP_SUMMARY
-            }
+            echo "No vulnerabilities found." >> $GITHUB_STEP_SUMMARY
           }
         shell: pwsh
+
         continue-on-error: true
