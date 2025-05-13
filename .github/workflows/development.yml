@@ -85,9 +85,27 @@ jobs:
           }
         shell: pwsh
         
-      # Upload dependency report as artifact
-      - name: Upload dependency report
-        uses: actions/upload-artifact@v4
-        with:
-          name: dependency-report
-          path: dependency-report.md
+      # Output vulnerable package report to GitHub Actions summary
+      - name: Output vulnerabilities to workflow summary
+        run: |
+          echo "## NuGet Vulnerability Report" >> $GITHUB_STEP_SUMMARY
+          if (Test-Path -Path nuget-vulnerabilities.md) {
+            Get-Content nuget-vulnerabilities.md >> $GITHUB_STEP_SUMMARY
+          } else {
+            echo "No NuGet vulnerabilities report found." >> $GITHUB_STEP_SUMMARY
+          }
+          
+          if (Test-Path -Path "package.json") {
+            echo "## NPM Audit Results" >> $GITHUB_STEP_SUMMARY
+            npm audit --json | ConvertFrom-Json | ForEach-Object {
+              $total = $_.metadata.vulnerabilities.info + $_.metadata.vulnerabilities.low + $_.metadata.vulnerabilities.moderate + $_.metadata.vulnerabilities.high + $_.metadata.vulnerabilities.critical
+              echo "Found $total vulnerabilities:" >> $GITHUB_STEP_SUMMARY
+              echo "- Critical: $($_.metadata.vulnerabilities.critical)" >> $GITHUB_STEP_SUMMARY
+              echo "- High: $($_.metadata.vulnerabilities.high)" >> $GITHUB_STEP_SUMMARY
+              echo "- Moderate: $($_.metadata.vulnerabilities.moderate)" >> $GITHUB_STEP_SUMMARY
+              echo "- Low: $($_.metadata.vulnerabilities.low)" >> $GITHUB_STEP_SUMMARY
+              echo "- Info: $($_.metadata.vulnerabilities.info)" >> $GITHUB_STEP_SUMMARY
+            }
+          }
+        shell: pwsh
+        continue-on-error: true
