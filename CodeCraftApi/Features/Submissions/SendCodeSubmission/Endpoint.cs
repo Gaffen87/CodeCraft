@@ -9,6 +9,7 @@ internal sealed class Endpoint(AppDbContext dbContext) : Endpoint<CodeSubmission
 	public override void Configure()
 	{
 		Post("/code/submissions");
+		Description(x => x.WithName("Send code submission"));
 		AllowAnonymous();
 		Summary(new Summary());
 	}

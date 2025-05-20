@@ -7,7 +7,9 @@ internal sealed class Endpoint(AppDbContext dbContext) : Endpoint<Request, Respo
 	public override void Configure()
 	{
 		Get("/code/submissions/{GroupId}");
+		Description(x => x.WithName("Get submissions by group id"));
 		AllowAnonymous();
+		Summary(new Summary());
 	}
 
 	public override async Task HandleAsync(Request r, CancellationToken c)
