@@ -1,6 +1,6 @@
-﻿using CodeCraftApi.Database;
-using CodeCraftApi.Domain.DomainEvents;
+﻿using CodeCraftApi.Domain.DomainEvents;
 using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.Features.DbAbstraction;
 using Microsoft.EntityFrameworkCore;
 using Group = CodeCraftApi.Domain.Entities.Group;
 
@@ -8,13 +8,18 @@ namespace CodeCraftApi.Features.Groups.SignalR.AddToGroup;
 
 internal sealed class Data
 {
-	public async static Task<List<User>> AddUserToGroup(AppDbContext context, string groupName, string userId)
+	public async static Task<List<User>> AddUserToGroup(IAppDbContext context, string groupName, string userId)
 	{
-		if (await GroupExists(context, groupName) == false)
+		bool exists = await GroupExists(context, groupName);
+		bool created = false;
+
+		if (!exists)
 		{
 			var id = await CreateNewGroup(context, groupName);
 
 			await new GroupCreatedEvent(id, groupName, []).PublishAsync();
+
+			created = true;
 		}
 
 		User? user = await GetUser(context, userId);
@@ -29,9 +34,19 @@ internal sealed class Data
 				await new UserLeftGroupEvent(userGroup.Id, user.Id).PublishAsync();
 			}
 
+			if (created)
+			{
+				await context.SaveChangesAsync();
+
+				return group!.Members;
+			}
+
 			group.Members.Add(user);
 
-			await new UserJoinedGroupEvent(group.Id, groupName, [user]).PublishAsync();
+			await new UserJoinedGroupEvent(
+				group.Id,
+				groupName,
+				[user]).PublishAsync();
 		}
 
 		await context.SaveChangesAsync();
@@ -39,23 +54,23 @@ internal sealed class Data
 		return group!.Members;
 	}
 
-	private static async Task<Group?> GetGroup(AppDbContext context, string groupName) => await context.Groups
+	private static async Task<Group?> GetGroup(IAppDbContext context, string groupName) => await context.Groups
 				.Include(g => g.Members)
 				.SingleOrDefaultAsync(g => g.Name == groupName);
-	private static async Task<User?> GetUser(AppDbContext context, string userId) => await context.Users.SingleOrDefaultAsync(x => x.Id == Guid.Parse(userId));
+	private static async Task<User?> GetUser(IAppDbContext context, string userId) => await context.Users.SingleOrDefaultAsync(x => x.Id == Guid.Parse(userId));
 
-	public async static Task<Guid> GetIdByName(AppDbContext context, string groupName)
+	public async static Task<Guid> GetIdByName(IAppDbContext context, string groupName)
 	{
 		var group = await context.Groups.FirstOrDefaultAsync(g => g.Name == groupName);
 		return group!.Id;
 	}
 
-	public async static Task<bool> GroupExists(AppDbContext context, string groupName)
+	public async static Task<bool> GroupExists(IAppDbContext context, string groupName)
 	{
 		return await context.Groups.FirstOrDefaultAsync(g => g.Name == groupName) != null;
 	}
 
-	public async static Task<Guid> CreateNewGroup(AppDbContext context, string groupName)
+	public async static Task<Guid> CreateNewGroup(IAppDbContext context, string groupName)
 	{
 		Group newGroup = new()
 		{
@@ -69,7 +84,7 @@ internal sealed class Data
 		};
 
 		await context.Groups.AddAsync(newGroup);
-		context.SaveChanges();
+		await context.SaveChangesAsync();
 
 		return newGroup.Id;
 	}

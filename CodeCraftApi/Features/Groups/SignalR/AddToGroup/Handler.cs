@@ -1,11 +1,11 @@
-﻿using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 using CodeCraftApi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.PepR;
 
 namespace CodeCraftApi.Features.Groups.SignalR.AddToGroup;
 
-internal sealed class AddToGroupHandler(IHubContext<AppHub> hub, AppDbContext dbContext) : HubMethodHandler<AddToGroupPayload>
+internal sealed class AddToGroupHandler(IHubContext<AppHub> hub, IAppDbContext dbContext) : HubMethodHandler<AddToGroupPayload>
 {
 	protected override async Task HandleAsync(HubCallerContext callerContext, AddToGroupPayload payload)
 	{

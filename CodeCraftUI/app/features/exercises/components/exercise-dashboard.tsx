@@ -1,12 +1,9 @@
-import { Outlet } from "react-router";
+import ExerciseForm from "./exercise-form";
 
 export default function ExerciseDashboard() {
 	return (
 		<div className="flex flex-row">
-			<div>
-				Sidebar
-			</div>
-			<Outlet />
+			<ExerciseForm />
 		</div>
 	);
 }
