@@ -1,11 +1,11 @@
-﻿using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 using CodeCraftApi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.PepR;
 
 namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
 
-internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, AppDbContext dbContext) : HubMethodHandler<RemoveFromGroupPayload>
+internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, IAppDbContext dbContext) : HubMethodHandler<RemoveFromGroupPayload>
 {
 	protected override async Task HandleAsync(HubCallerContext context, RemoveFromGroupPayload payload)
 	{
