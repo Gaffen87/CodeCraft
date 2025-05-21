@@ -10,8 +10,9 @@ export default [
 	layout("./shared/protected-layout-navbar.tsx", [
 		index("./features/dashboard/index.tsx"),
 		...prefix("/exercises", [
-			layout("./features/exercises/layout.tsx", [
+			layout("./features/exercises/index.tsx", [
 				index("./features/exercises/components/exercise-dashboard.tsx"),
+				route("create", "./features/exercises/components/exercise-form.tsx"),
 			]),
 		]),
 	]),

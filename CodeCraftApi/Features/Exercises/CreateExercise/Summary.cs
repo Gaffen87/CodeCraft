@@ -29,7 +29,7 @@ internal sealed class Summary : EndpointSummary
 								Title = "Step 1",
 								Description = "Learn about asynchronous programming and its use cases.",
 								DescriptionShort = "Intro to async/await.",
-								Contraints = "Must include a working example.",
+								Constraints = "Must include a working example.",
 								Hints = "Focus on async Task and await keyword."
 							}
 						]
