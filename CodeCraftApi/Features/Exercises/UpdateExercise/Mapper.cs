@@ -50,7 +50,7 @@ internal sealed class Mapper : Mapper<UpdateExerciseRequest, Response, Exercise>
 				Title = item.Title,
 				Description = item.Description,
 				DescriptionShort = item.DescriptionShort,
-				Contraints = item.Contraints,
+				Constraints = item.Contraints,
 				Hints = item.Hints,
 				Tests = []
 			};

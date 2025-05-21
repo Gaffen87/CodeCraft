@@ -1,8 +1,8 @@
-﻿using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 
 namespace CodeCraftApi.Features.Exercises.UpdateExercise;
 
-internal sealed class UpdateExerciseEndpoint(AppDbContext context) : Endpoint<UpdateExerciseRequest, Response, Mapper>
+internal sealed class UpdateExerciseEndpoint(IAppDbContext context) : Endpoint<UpdateExerciseRequest, Response, Mapper>
 {
 	public override void Configure()
 	{

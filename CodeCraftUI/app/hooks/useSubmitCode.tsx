@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCodeStore } from "~/stores/codeStore";
 
 export default function useSubmitCode() {

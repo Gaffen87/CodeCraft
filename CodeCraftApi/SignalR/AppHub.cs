@@ -1,11 +1,9 @@
-﻿
-
-using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 using SignalR.PepR;
 
 namespace CodeCraftApi.SignalR;
 
-public class AppHub(IEnumerable<IHubMethodHandler> methodHandlers, AppDbContext dbContext) : PepRHub(methodHandlers)
+public class AppHub(IEnumerable<IHubMethodHandler> methodHandlers, IAppDbContext dbContext) : PepRHub(methodHandlers)
 {
 	//public override async Task OnConnectedAsync()
 	//{

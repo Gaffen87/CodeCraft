@@ -1,13 +1,13 @@
-﻿using CodeCraftApi.Database;
-using CodeCraftApi.Domain.DomainEvents;
+﻿using CodeCraftApi.Domain.DomainEvents;
 using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.Features.DbAbstraction;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
 
 internal sealed class Data
 {
-	public async static Task<List<User>> RemoveUserFromGroup(AppDbContext context, string groupName, string userId)
+	public async static Task<List<User>> RemoveUserFromGroup(IAppDbContext context, string groupName, string userId)
 	{
 		var group = await context.Groups.Include(m => m.Members).SingleOrDefaultAsync(g => g.Name == groupName);
 

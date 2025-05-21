@@ -3,6 +3,13 @@ import { useNavigate } from "react-router";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "~/components/ui/card";
 
 export default function Login() {
 	const navigate = useNavigate();
@@ -28,18 +35,36 @@ export default function Login() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<div className="mb-4 space-y-1">
-				<Label htmlFor="email">Email</Label>
-				<Input type="email" id="email" name="email" />
-			</div>
-			<div className="mb-4 space-y-1">
-				<Label htmlFor="password">Password</Label>
-				<Input type="password" id="password" name="password" />
-			</div>
-			<Button className="mt-4" type="submit">
-				Log In
-			</Button>
-		</form>
+		<Card>
+			<CardHeader>
+				<CardTitle>Login</CardTitle>
+				<CardDescription>Login with an existing account</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={handleSubmit}>
+					<div className="mb-4 space-y-1">
+						<Label htmlFor="email">Email</Label>
+						<Input
+							type="email"
+							id="email"
+							name="email"
+							autoComplete="username"
+						/>
+					</div>
+					<div className="mb-4 space-y-1">
+						<Label htmlFor="password">Password</Label>
+						<Input
+							type="password"
+							id="password"
+							name="password"
+							autoComplete="current-password"
+						/>
+					</div>
+					<Button className="mt-4" type="submit">
+						Log In
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
 	);
 }

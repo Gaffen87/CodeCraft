@@ -1,19 +1,19 @@
-﻿using CodeCraftApi.Database;
-using CodeCraftApi.Domain.Entities;
+﻿using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.Features.DbAbstraction;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeCraftApi.Features.Exercises.UpdateExercise;
 
 internal sealed class Data
 {
-	public async static Task<bool> ExerciseExists(AppDbContext context, Guid Id)
+	public async static Task<bool> ExerciseExists(IAppDbContext context, Guid Id)
 	{
 		var exercise = await context.Exercises.AsNoTracking().FirstOrDefaultAsync(x => x.Id == Id);
 
 		return exercise != null;
 	}
 
-	public static async Task<bool> UpdateExercise(AppDbContext context, Exercise exercise)
+	public static async Task<bool> UpdateExercise(IAppDbContext context, Exercise exercise)
 	{
 		var existing = await context.Exercises
 		.Include(e => e.SubExercises)
@@ -37,7 +37,7 @@ internal sealed class Data
 		return await context.SaveChangesAsync() > 0;
 	}
 
-	private static void UpdateSubExerciseList(AppDbContext context, Exercise exercise, Exercise? existing)
+	private static void UpdateSubExerciseList(IAppDbContext context, Exercise exercise, Exercise? existing)
 	{
 		context.ExerciseItem.RemoveRange(existing!.SubExercises);
 		foreach (var item in existing.SubExercises)

@@ -2,6 +2,7 @@ global using FastEndpoints;
 global using FastEndpoints.Swagger;
 using CodeCraftApi.Database;
 using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.Features.DbAbstraction;
 using CodeCraftApi.SignalR;
 using FastEndpoints.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -72,6 +73,8 @@ namespace CodeCraftApi
 					o.MapEnum<Status>();
 					o.MapEnum<SessionStatus>();
 				}));
+
+			builder.Services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<AppDbContext>());
 
 			var app = builder.Build();
 

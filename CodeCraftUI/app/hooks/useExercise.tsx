@@ -1,34 +1,25 @@
-import { useEffect, useState } from "react";
+import type { CreateExercise } from "~/types/types";
 
-export default function useExercise({ exerciseId }) {
-	const [exercise, setExercise] = useState();
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+export default function useExercise() {
+	async function createExercise(payload: CreateExercise) {
+		console.log("Exercise created payload:", payload);
+		const res = await fetch(import.meta.env.VITE_API_URL + "/exercises", {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(payload),
+		});
+		const data = await res.json();
+		console.log("Exercise created res:", res.status);
+		console.log("Exercise created:", data);
+	}
 
-	useEffect(() => {
-		const fetchExercise = async () => {
-			try {
-				const response = await fetch(
-					import.meta.env.VITE_API_URL + "/api/exercise/1",
-					{
-						method: "GET",
-						headers: {
-							"Content-Type": "application/json",
-						},
-					}
-				);
-				if (!response.ok) {
-					throw new Error("Network response was not ok");
-				}
-				const data = await response.json();
-				setExercise(data);
-			} catch (error) {
-				console.error("Error fetching exercise:", error);
-			}
-		};
+	async function getExercises() {
+		const res = await fetch(import.meta.env.VITE_API_URL + "/exercises");
+		const data = await res.json();
+		console.log("Exercises fetched:", data);
+	}
 
-		fetchExercise();
-	}, []);
-
-	return { exercise, loading, error };
+	return { createExercise, getExercises };
 }

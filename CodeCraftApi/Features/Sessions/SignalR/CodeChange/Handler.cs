@@ -4,7 +4,7 @@ using SignalR.PepR;
 
 namespace CodeCraftApi.Features.Sessions.SignalR.CodeChange;
 
-internal sealed class EditorChangedHandler(IHubContext<AppHub> hub, ILogger<EditorChangedHandler> logger) : HubMethodHandler<CodeChangePayload>
+internal sealed class EditorChangedHandler(IHubContext<AppHub> hub) : HubMethodHandler<CodeChangePayload>
 {
 	protected override async Task HandleAsync(HubCallerContext context, CodeChangePayload payload)
 	{
