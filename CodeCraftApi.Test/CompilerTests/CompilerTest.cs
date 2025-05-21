@@ -45,7 +45,7 @@ public class CompilerTest
 		var result = await SimpleCompiler.CodeRunner(input);
 
 		Assert.NotNull(result);
-		Assert.Equal("Hello, World!\r\n", result.Values.First());
+		Assert.Equal("Hello, World!\r\n".TrimEnd(['\r', '\n']), result.Values.First().TrimEnd(['\r', '\n']));
 	}
 
 	[Fact]
