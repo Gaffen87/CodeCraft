@@ -1,7 +1,7 @@
-﻿using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 
 namespace CodeCraftApi.Features.Exercises.CreateExercise;
-internal sealed class CreateExerciseEndpoint(AppDbContext context) : Endpoint<CreateExerciseRequest, CreateExerciseResponse, Mapper>
+internal sealed class CreateExerciseEndpoint(IAppDbContext context) : Endpoint<CreateExerciseRequest, CreateExerciseResponse, Mapper>
 {
 	public override void Configure()
 	{

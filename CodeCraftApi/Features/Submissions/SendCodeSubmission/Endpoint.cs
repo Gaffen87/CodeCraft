@@ -1,10 +1,10 @@
-﻿using CodeCraftApi.Database;
-using CodeCraftApi.Domain.DomainEvents;
+﻿using CodeCraftApi.Domain.DomainEvents;
+using CodeCraftApi.Features.DbAbstraction;
 using Compiler;
 
 namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
 
-internal sealed class Endpoint(AppDbContext dbContext) : Endpoint<CodeSubmissionRequest, CodeSubmissionResponse, Mapper>
+internal sealed class Endpoint(IAppDbContext dbContext) : Endpoint<CodeSubmissionRequest, CodeSubmissionResponse, Mapper>
 {
 	public override void Configure()
 	{

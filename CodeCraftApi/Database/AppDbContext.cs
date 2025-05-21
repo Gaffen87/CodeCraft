@@ -1,10 +1,11 @@
 ﻿using CodeCraftApi.Domain.Entities;
+using CodeCraftApi.Features.DbAbstraction;
 using Microsoft.EntityFrameworkCore;
 using Group = CodeCraftApi.Domain.Entities.Group;
 
 namespace CodeCraftApi.Database;
 
-public class AppDbContext : DbContext
+public class AppDbContext : DbContext, IAppDbContext
 {
 	public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
 	{
@@ -22,14 +23,14 @@ public class AppDbContext : DbContext
 		modelBuilder.Entity<Test>().Property(x => x.Content).HasColumnType("jsonb");
 	}
 
-	public virtual DbSet<Exercise> Exercises { get; set; }
-	public virtual DbSet<ExerciseItem> ExerciseItem { get; set; }
-	public virtual DbSet<ExerciseStep> ExerciseStep { get; set; }
-	public virtual DbSet<Group> Groups { get; set; }
-	public virtual DbSet<Category> Categories { get; set; }
-	public virtual DbSet<Session> Sessions { get; set; }
-	public virtual DbSet<Test> Tests { get; set; }
-	public virtual DbSet<User> Users { get; set; }
-	public virtual DbSet<CodeSubmission> Submissions { get; set; }
-	public virtual DbSet<CodeFile> CodeFiles { get; set; }
+	public DbSet<Exercise> Exercises { get; set; }
+	public DbSet<ExerciseItem> ExerciseItem { get; set; }
+	public DbSet<ExerciseStep> ExerciseStep { get; set; }
+	public DbSet<Group> Groups { get; set; }
+	public DbSet<Category> Categories { get; set; }
+	public DbSet<Session> Sessions { get; set; }
+	public DbSet<Test> Tests { get; set; }
+	public DbSet<User> Users { get; set; }
+	public DbSet<CodeSubmission> Submissions { get; set; }
+	public DbSet<CodeFile> CodeFiles { get; set; }
 }

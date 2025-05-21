@@ -30,26 +30,10 @@ export default function AuthLayout() {
 					<TabsTrigger value="signup">Sign up</TabsTrigger>
 				</TabsList>
 				<TabsContent value="login">
-					<Card>
-						<CardHeader>
-							<CardTitle>Login</CardTitle>
-							<CardDescription>Login with an existing account</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<Login />
-						</CardContent>
-					</Card>
+					<Login />
 				</TabsContent>
 				<TabsContent value="signup">
-					<Card>
-						<CardHeader>
-							<CardTitle>Sign up</CardTitle>
-							<CardDescription>Create a new account</CardDescription>
-						</CardHeader>
-						<CardContent>
-							<SignUp />
-						</CardContent>
-					</Card>
+					<SignUp />
 				</TabsContent>
 			</Tabs>
 		</div>

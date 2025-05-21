@@ -3,6 +3,13 @@ import supabase from "../../../lib/supabase";
 import { useNavigate } from "react-router";
 import { Button } from "~/components/ui/button";
 import { Label } from "~/components/ui/label";
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from "~/components/ui/card";
 
 export default function SignUp() {
 	const navigate = useNavigate();
@@ -36,22 +43,35 @@ export default function SignUp() {
 	};
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<div className="mb-4 space-y-1">
-				<Label htmlFor="name">Name</Label>
-				<Input type="text" id="name" name="name" />
-			</div>
-			<div className="mb-4 space-y-1">
-				<Label htmlFor="email">Email</Label>
-				<Input type="email" id="email" name="email" />
-			</div>
-			<div className="mb-4 space-y-1">
-				<Label htmlFor="password">Password</Label>
-				<Input type="password" id="password" name="password" />
-			</div>
-			<Button className="mt-4" type="submit">
-				Sign up
-			</Button>
-		</form>
+		<Card>
+			<CardHeader>
+				<CardTitle>Sign up</CardTitle>
+				<CardDescription>Create a new account</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<form onSubmit={handleSubmit}>
+					<div className="mb-4 space-y-1">
+						<Label htmlFor="name">Name</Label>
+						<Input type="text" id="name" name="name" />
+					</div>
+					<div className="mb-4 space-y-1">
+						<Label htmlFor="email">Email</Label>
+						<Input type="email" id="email" name="email" autoComplete="email" />
+					</div>
+					<div className="mb-4 space-y-1">
+						<Label htmlFor="password">Password</Label>
+						<Input
+							type="password"
+							id="password"
+							name="password"
+							autoComplete="current-password"
+						/>
+					</div>
+					<Button className="mt-4" type="submit">
+						Sign up
+					</Button>
+				</form>
+			</CardContent>
+		</Card>
 	);
 }

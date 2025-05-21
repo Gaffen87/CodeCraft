@@ -7,13 +7,14 @@ import {
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
-import { Badge } from "~/components/ui/badge";
 import type { CodeSubmit, Group } from "~/types/types";
 import useGroups from "~/hooks/useGroups";
 import useAuth from "~/hooks/useAuth";
 import { useNavigate } from "react-router";
 import { useSubmitStore } from "~/stores/submitStore";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import SubmissionBadge from "./submission-badge";
+import Member from "./member";
 
 export default function GroupCard({ group }: { group: Group }) {
 	const { loading, getSubmissionsByGroup } = useGroups();
@@ -21,25 +22,6 @@ export default function GroupCard({ group }: { group: Group }) {
 	const isMember = group.members?.some((member) => member.id === user?.id);
 	const navigate = useNavigate();
 	const { submissions, setGroupSubmissions } = useSubmitStore();
-
-	function getFailedAttemptsSinceLastSuccess(
-		submissions: CodeSubmit[]
-	): number {
-		if (!submissions || submissions.length === 0) return 0;
-
-		submissions = submissions.sort((a, b) => {
-			return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
-		});
-
-		let failedCount = 0;
-		for (let i = submissions.length - 1; i >= 0; i--) {
-			if (submissions[i].isSuccess) {
-				break;
-			}
-			failedCount++;
-		}
-		return failedCount;
-	}
 
 	useEffect(() => {
 		async function fetchSubmissions() {
@@ -53,34 +35,31 @@ export default function GroupCard({ group }: { group: Group }) {
 	}, [group.id]);
 
 	return (
-		<Card className="w-[300px] relative">
-			{submissions[group.id] &&
-				getFailedAttemptsSinceLastSuccess(submissions[group.id]) !== 0 && (
-					<Badge className="absolute -top-2 -right-2" variant={"destructive"}>
-						Failed attempts:{" "}
-						<span>
-							{getFailedAttemptsSinceLastSuccess(submissions[group.id])}
-						</span>
-					</Badge>
-				)}
-			<CardHeader>
-				<CardTitle>{group.name}</CardTitle>
-				<CardDescription>members</CardDescription>
+		<Card className="min-h-[250px] relative shadow-lg border border-gray-200 rounded-2xl bg-white hover:shadow-xl transition-all">
+			{user?.user_metadata.role === "teacher" && (
+				<SubmissionBadge submissions={submissions[group.id]} />
+			)}
+			<CardHeader className="space-y-1">
+				<CardTitle className="text-xl font-semibold text-gray-900 border-b border-gray-200 pb-2">
+					{group.name}
+				</CardTitle>
+				<CardDescription className="text-sm text-gray-500">
+					<div className="space-y-1">
+						{group.members.map((member) => (
+							<Member key={member.id} member={member} />
+						))}
+					</div>
+				</CardDescription>
 			</CardHeader>
-			<CardContent>
-				{group.members &&
-					group.members.map((member) => <p key={member.id}>{member.name}</p>)}
-			</CardContent>
-			<CardFooter>
+			<CardFooter className="mt-auto">
 				{!isMember && (
 					<Button
-						variant={"default"}
+						variant="default"
 						disabled={loading}
-						onClick={() => {
-							navigate("/session/" + group.id);
-						}}
+						className="w-full"
+						onClick={() => navigate("/session/" + group.id)}
 					>
-						Join
+						Join Group
 					</Button>
 				)}
 			</CardFooter>

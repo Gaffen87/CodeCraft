@@ -16,16 +16,10 @@ public class CreateExerciseEndpointTests
 		var options = new DbContextOptionsBuilder<AppDbContext>()
 			.UseInMemoryDatabase(databaseName: "TestDatabase_" + Guid.NewGuid())
 			.Options;
-    
+
 		var context = new AppDbContext(options);
-    
-		var ep = Factory.Create<CreateExerciseEndpoint>(
-			ctx => {
-				ctx.AddTestServices(s => {
-					
-				});
-			},
-			context);
+
+		var ep = Factory.Create<CreateExerciseEndpoint>(context);
 
 		var req = new CreateExerciseRequest()
 		{
@@ -35,10 +29,12 @@ public class CreateExerciseEndpointTests
 			SubExercises = []
 		};
 
-		try {
+		try
+		{
 			await ep.HandleAsync(req, CancellationToken.None);
 		}
-		catch (InvalidOperationException ex) when (ex.Message.Contains("LinkGenerator")) {
+		catch (InvalidOperationException ex) when (ex.Message.Contains("LinkGenerator"))
+		{
 		}
 
 		var savedExercise = await context.Exercises.FirstOrDefaultAsync(e => e.Title == "Title");
