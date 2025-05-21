@@ -52,7 +52,7 @@ internal sealed class Mapper : Mapper<GetExerciseRequest, GetExerciseResponse, E
 				Title = item.Title,
 				Description = item.Description,
 				DescriptionShort = item.DescriptionShort,
-				Contraints = item.Contraints,
+				Contraints = item.Constraints,
 				Hints = item.Hints,
 				Tests = item.Tests
 			};

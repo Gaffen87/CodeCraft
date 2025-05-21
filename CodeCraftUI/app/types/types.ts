@@ -34,3 +34,24 @@ export type AddToGroupPayload = {
 export type RemoveFromGroupPayload = {
 	groupName: string;
 };
+
+export type CreateExercise = {
+	title: string;
+	summary: string;
+	exerciseDifficulty: number;
+	subExercises: CreateSubExercise[];
+};
+
+export type CreateSubExercise = {
+	number: number;
+	title: string;
+	steps: CreateExerciseStep[];
+};
+
+export type CreateExerciseStep = {
+	title: string;
+	description: string;
+	descriptionShort: string;
+	constraints: string;
+	hints: string;
+};
