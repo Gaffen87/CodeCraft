@@ -3,7 +3,9 @@ using CodeCraftApi.Features.Exercises.Shared;
 using FluentValidation;
 
 namespace CodeCraftApi.Features.Exercises.GetExercise;
-
+/// <summary>
+/// Request class for getting an exercise.
+/// </summary>
 internal sealed class GetExerciseRequest
 {
 	public Guid ExerciseId { get; set; }
@@ -16,7 +18,9 @@ internal sealed class GetExerciseRequest
 		}
 	}
 }
-
+/// <summary>
+/// Response class for getting an exercise.
+/// </summary>
 internal sealed class GetExerciseResponse
 {
 	public Guid Id { get; set; }

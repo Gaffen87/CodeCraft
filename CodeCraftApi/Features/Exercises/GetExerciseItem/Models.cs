@@ -3,11 +3,16 @@ namespace CodeCraftApi.Features.Exercises.GetExerciseItem;
 using Domain.Entities;
 using FluentValidation;
 using Shared;
-
+/// <summary>
+/// Request class for getting an exercise item.
+/// </summary>
 internal sealed class GetExerciseItemRequest
 {
     public Guid ExerciseItemId { get; set; }
 
+    /// <summary>
+    /// Validator class for validating the request.
+    /// </summary>
     internal sealed class Validator : Validator<GetExerciseItemRequest>
     {
         public Validator()
@@ -16,7 +21,9 @@ internal sealed class GetExerciseItemRequest
         }
     }
 }
-
+/// <summary>
+/// Response class for getting an exercise item.
+/// </summary>
 internal sealed class GetExerciseItemResponse
 {
     public Guid Id { get; set; }

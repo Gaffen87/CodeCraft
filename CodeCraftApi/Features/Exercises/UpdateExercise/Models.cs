@@ -2,7 +2,9 @@
 using FluentValidation;
 
 namespace CodeCraftApi.Features.Exercises.UpdateExercise;
-
+/// <summary>
+/// Request class for updating an exercise.
+/// </summary>
 internal sealed class UpdateExerciseRequest
 {
 	public Guid ExerciseId { get; set; }
@@ -10,7 +12,9 @@ internal sealed class UpdateExerciseRequest
 	public string Summary { get; set; }
 	public ExerciseDifficulty ExerciseDifficulty { get; set; }
 	public List<UpdateExerciseItem> SubExercises { get; set; }
-
+	/// <summary>
+	/// Validator class for validating the request.
+	/// </summary>
 	internal sealed class Validator : Validator<UpdateExerciseRequest>
 	{
 		public Validator()

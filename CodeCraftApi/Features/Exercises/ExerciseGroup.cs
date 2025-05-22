@@ -1,5 +1,7 @@
 ﻿namespace CodeCraftApi.Features.Exercises;
-
+/// <summary>
+/// Group class for organizing exercise-related endpoints.
+/// </summary>
 internal sealed class ExerciseGroup : FastEndpoints.Group
 {
 	public ExerciseGroup()

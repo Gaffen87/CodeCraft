@@ -1,7 +1,9 @@
 namespace CodeCraftApi.Features.Exercises.GetExerciseItem;
 
 using Shared;
-
+/// <summary>
+/// Summary class for the GetExerciseItem endpoint.
+/// </summary>
 internal sealed class Summary : EndpointSummary
 {
     public Summary()

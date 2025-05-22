@@ -3,9 +3,15 @@ using CodeCraftApi.Features.DbAbstraction;
 using Compiler;
 
 namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
-
+/// <summary>
+/// Endpoint for sending code submissions.
+/// </summary>
+/// <param name="dbContext"> The application database context.</param>
 internal sealed class Endpoint(IAppDbContext dbContext) : Endpoint<CodeSubmissionRequest, CodeSubmissionResponse, Mapper>
 {
+	/// <summary>
+	/// Configures the endpoint.
+	/// </summary>
 	public override void Configure()
 	{
 		Post("/code/submissions");
@@ -13,7 +19,11 @@ internal sealed class Endpoint(IAppDbContext dbContext) : Endpoint<CodeSubmissio
 		AllowAnonymous();
 		Summary(new Summary());
 	}
-
+	/// <summary>
+	/// Handles the request to send a code submission.
+	/// </summary>
+	/// <param name="r"> The request containing the code submission data.</param>
+	/// <param name="c"> The cancellation token.</param>
 	public override async Task HandleAsync(CodeSubmissionRequest r, CancellationToken c)
 	{
 		var compilerResult = await ProcessCodeSubmission(r);
@@ -38,7 +48,12 @@ internal sealed class Endpoint(IAppDbContext dbContext) : Endpoint<CodeSubmissio
 
 		await SendAsync(new CodeSubmissionResponse { Result = compilerResult.Values.First(), isSuccess = compilerResult.Keys.First() });
 	}
-
+	
+	/// <summary>
+	/// Processes the code submission by compiling and running the code.
+	/// </summary>
+	/// <param name="r"> The code submission request containing the code files.</param>
+	/// <returns> A dictionary containing the compilation result and the output of the code.</returns>
 	private static async Task<Dictionary<bool, string>> ProcessCodeSubmission(CodeSubmissionRequest r)
 	{
 		Dictionary<string, string> codeFiles = [];

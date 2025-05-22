@@ -1,7 +1,10 @@
 ﻿namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
-
+/// <summary>
+/// Request class for sending code submissions.
+/// </summary>
 internal sealed class Summary : EndpointSummary
 {
+	
 	public Summary()
 	{
 		Summary = "Send code for execution";
