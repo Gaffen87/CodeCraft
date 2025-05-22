@@ -4,7 +4,11 @@ using Microsoft.AspNetCore.SignalR;
 using SignalR.PepR;
 
 namespace CodeCraftApi.Features.Groups.SignalR.RemoveFromGroup;
-
+/// <summary>
+/// Handler for removing a user from a group.
+/// </summary>
+/// <param name="hub"> The SignalR hub context.</param>
+/// <param name="dbContext"> The application database context.</param>
 internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, IAppDbContext dbContext) : HubMethodHandler<RemoveFromGroupPayload>
 {
 	protected override async Task HandleAsync(HubCallerContext context, RemoveFromGroupPayload payload)
@@ -13,16 +17,5 @@ internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, IAppDbCont
 
 		var members = await Data.RemoveUserFromGroup(dbContext, payload.GroupName, context.UserIdentifier!);
 
-		//var response = new HubResponse<RemoveFromGroupResponse>
-		//{
-		//	Type = HubResponseType.Group,
-		//	Content = new RemoveFromGroupResponse
-		//	{
-		//		GroupName = payload.GroupName,
-		//		Members = members
-		//	}
-		//};
-
-		//await hub.Clients.All.SendCoreAsync("ReceiveMessage", [response]);
 	}
 }

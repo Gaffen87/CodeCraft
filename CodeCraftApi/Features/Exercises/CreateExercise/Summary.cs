@@ -2,7 +2,9 @@
 
 using CodeCraftApi.Features.Exercises.Shared;
 using Domain.Entities;
-
+/// <summary>
+/// Summary class for the CreateExercise endpoint.
+/// </summary>
 internal sealed class Summary : EndpointSummary
 {
 	public Summary()

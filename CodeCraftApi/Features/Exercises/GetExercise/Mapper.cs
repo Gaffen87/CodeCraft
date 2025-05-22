@@ -2,9 +2,16 @@
 using CodeCraftApi.Features.Exercises.Shared;
 
 namespace CodeCraftApi.Features.Exercises.GetExercise;
-
+/// <summary>
+/// Mapper class for converting between Exercise entities and GetExerciseResponse.
+/// </summary>
 internal sealed class Mapper : Mapper<GetExerciseRequest, GetExerciseResponse, Exercise>
 {
+	/// <summary>
+	/// Maps a GetExerciseRequest to an Exercise entity.
+	/// </summary>
+	/// <param name="e"> The GetExerciseRequest to map.</param>
+	/// <returns></returns>
 	public override GetExerciseResponse FromEntity(Exercise e)
 	{
 		GetExerciseResponse response = new()
@@ -20,7 +27,11 @@ internal sealed class Mapper : Mapper<GetExerciseRequest, GetExerciseResponse, E
 
 		return response;
 	}
-
+	/// <summary>
+	/// Maps a list of ExerciseItem entities to a list of ExerciseItemResponse.
+	/// </summary>
+	/// <param name="exerciseItems"> The list of ExerciseItem entities to map.</param>
+	/// <returns> The mapped list of ExerciseItemResponse.</returns>
 	public static List<ExerciseItemResponse> EntityToItemResponse(List<ExerciseItem> exerciseItems)
 	{
 		List<ExerciseItemResponse> items = [];
@@ -39,7 +50,11 @@ internal sealed class Mapper : Mapper<GetExerciseRequest, GetExerciseResponse, E
 
 		return items;
 	}
-
+	/// <summary>
+	/// Maps a list of ExerciseStep entities to a list of ExerciseStepResponse.
+	/// </summary>
+	/// <param name="exerciseSteps"> The list of ExerciseStep entities to map.</param>
+	/// <returns> The mapped list of ExerciseStepResponse.</returns>
 	public static List<ExerciseStepResponse> EntityToStepResponse(List<ExerciseStep> exerciseSteps)
 	{
 		List<ExerciseStepResponse> steps = [];

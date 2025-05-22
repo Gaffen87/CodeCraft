@@ -3,6 +3,9 @@ using CodeCraftApi.Features.Exercises.CreateExercise;
 using CodeCraftApi.Features.Exercises.Shared;
 
 namespace CodeCraftApi.Features.Exercises.GetExercise;
+/// <summary>
+/// Summary class for the GetExercise endpoint.
+/// </summary>
 internal sealed class Summary : EndpointSummary
 {
 	public Summary()

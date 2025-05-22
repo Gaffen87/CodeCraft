@@ -2,7 +2,9 @@
 using System.Text.Json;
 
 namespace CodeCraftApi.SignalR;
-
+/// <summary>
+/// Provides the user ID for SignalR connections.
+/// </summary>
 public class HubUserIdProvider : IUserIdProvider
 {
 	public virtual string? GetUserId(HubConnectionContext connection)

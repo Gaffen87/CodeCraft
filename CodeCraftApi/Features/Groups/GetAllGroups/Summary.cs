@@ -1,7 +1,9 @@
 namespace CodeCraftApi.Features.Groups.GetAllGroups;
 
 using Domain.Entities;
-
+/// <summary>
+/// Class representing the summary of the GetAllGroups endpoint.
+/// </summary>
 internal sealed class Summary : EndpointSummary
 {
     public Summary()

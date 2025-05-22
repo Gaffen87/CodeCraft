@@ -1,9 +1,16 @@
 ﻿using CodeCraftApi.Domain.Entities;
 
 namespace CodeCraftApi.Features.Exercises.UpdateExercise;
-
+/// <summary>
+/// Mapper class for converting UpdateExerciseRequest to Exercise entity.
+/// </summary>
 internal sealed class Mapper : Mapper<UpdateExerciseRequest, Response, Exercise>
 {
+	/// <summary>
+	/// Converts an UpdateExerciseRequest to an Exercise entity.
+	/// </summary>
+	/// <param name="r"> The UpdateExerciseRequest to convert.</param>
+	/// <returns> The converted Exercise entity.</returns>
 	public override Exercise ToEntity(UpdateExerciseRequest r)
 	{
 		Exercise exercise = new()
@@ -18,7 +25,11 @@ internal sealed class Mapper : Mapper<UpdateExerciseRequest, Response, Exercise>
 		};
 		return exercise;
 	}
-
+	/// <summary>
+	/// Converts an Exercise entity to an UpdateExerciseResponse.
+	/// </summary>
+	/// <param name="r"> The Exercise entity to convert.</param>
+	/// <returns> The converted UpdateExerciseResponse.</returns>
 	public static List<ExerciseItem> ItemToEntity(List<UpdateExerciseItem> r)
 	{
 		List<ExerciseItem> items = [];
@@ -37,7 +48,11 @@ internal sealed class Mapper : Mapper<UpdateExerciseRequest, Response, Exercise>
 
 		return items;
 	}
-
+	/// <summary>
+	/// Converts a list of UpdateExerciseStep to a list of ExerciseStep entities.
+	/// </summary>
+	/// <param name="r"> The list of UpdateExerciseStep to convert.</param>
+	/// <returns>> The converted list of ExerciseStep entities.</returns>
 	public static List<ExerciseStep> StepToEntity(List<UpdateExerciseStep> r)
 	{
 		List<ExerciseStep> steps = [];

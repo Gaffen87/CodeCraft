@@ -1,5 +1,7 @@
 ﻿namespace CodeCraftApi.Features.Submissions.SendCodeSubmission;
-
+/// <summary>
+/// Request class for sending code submissions.
+/// </summary>
 internal sealed class CodeSubmissionRequest
 {
 	public List<CodeFileRequest> Files { get; set; }
@@ -14,7 +16,9 @@ internal sealed class CodeSubmissionRequest
 		}
 	}
 }
-
+/// <summary>
+/// Request class for sending code files.
+/// </summary>
 internal sealed class CodeFileRequest
 {
 	public string FileName { get; set; }

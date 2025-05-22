@@ -1,7 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
 namespace CodeCraftApi.SignalR;
-
+/// <summary>
+/// Represents an access token used for authentication.
+/// </summary>
 public class AccessToken
 {
 	[JsonPropertyName("sub")]

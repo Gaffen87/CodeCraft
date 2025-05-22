@@ -1,5 +1,7 @@
 namespace CodeCraftApi.Features.Submissions.GetSubmissionsByGroupId;
-
+/// <summary>
+/// Summary class for the GetSubmissionsByGroupId endpoint.
+/// </summary>
 internal sealed class Summary : EndpointSummary
 {
     public Summary()
