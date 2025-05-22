@@ -22,7 +22,7 @@ export default function useSubmitCode() {
 						},
 					],
 					submittedBy: groupId,
-					exerciseStep: "ae487a06-a508-4191-9f22-faae7f9463ba",
+					exerciseStep: "83dfe1be-baf5-47db-b797-b403089fa1a9",
 				}),
 			}
 		);
