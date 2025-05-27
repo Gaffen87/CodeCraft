@@ -5,7 +5,7 @@ export default function useSubmitCode() {
 	const { code, setConsole } = useCodeStore();
 	const [loading, setLoading] = useState(false);
 
-	async function Submit(groupId: string) {
+	async function Submit(groupId: string, stepId: string) {
 		setLoading(true);
 		const response = await fetch(
 			import.meta.env.VITE_API_URL + "/code/submissions",
@@ -22,12 +22,11 @@ export default function useSubmitCode() {
 						},
 					],
 					submittedBy: groupId,
-					exerciseStep: "83dfe1be-baf5-47db-b797-b403089fa1a9",
+					exerciseStep: stepId,
 				}),
 			}
 		);
 		const data = await response.json();
-		setConsole(data.result);
 		setLoading(false);
 	}
 

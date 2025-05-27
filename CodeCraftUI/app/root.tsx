@@ -63,7 +63,7 @@ export default function App() {
 	return (
 		<AuthProvider>
 			<SignalRProvider>
-				<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+				<ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
 					<Outlet />
 				</ThemeProvider>
 			</SignalRProvider>

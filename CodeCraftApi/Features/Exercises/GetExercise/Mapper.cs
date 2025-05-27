@@ -40,7 +40,7 @@ internal sealed class Mapper : Mapper<GetExerciseRequest, GetExerciseResponse, E
 		{
 			ExerciseItemResponse response = new()
 			{
-				Id = Guid.NewGuid(),
+				Id = item.Id,
 				Title = item.Title,
 				Number = item.Number,
 				Steps = EntityToStepResponse(item.Steps),
@@ -63,7 +63,7 @@ internal sealed class Mapper : Mapper<GetExerciseRequest, GetExerciseResponse, E
 		{
 			ExerciseStepResponse step = new()
 			{
-				Id = Guid.NewGuid(),
+				Id = item.Id,
 				Title = item.Title,
 				Description = item.Description,
 				DescriptionShort = item.DescriptionShort,

@@ -13,6 +13,11 @@ export default [
 			layout("./features/exercises/index.tsx", [
 				index("./features/exercises/components/exercise-dashboard.tsx"),
 				route("create", "./features/exercises/components/exercise-form.tsx"),
+				route("view", "./features/exercises/components/exercise-overview.tsx"),
+				route(
+					"details/:exerciseId",
+					"./features/exercises/components/exercise-details.tsx"
+				),
 			]),
 		]),
 	]),
