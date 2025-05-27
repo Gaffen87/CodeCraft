@@ -12,6 +12,7 @@ public class Exercise
 	public DateTimeOffset CreatedAt { get; set; }
 	public DateTimeOffset UpdatedAt { get; set; }
 	public bool IsDeleted { get; set; }
+	public bool IsVisible { get; set; }
 	public List<ExerciseItem> SubExercises { get; set; }
 	public List<Category> Categories { get; set; }
 	public List<Group> Groups { get; set; }

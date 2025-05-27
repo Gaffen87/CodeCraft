@@ -20,7 +20,6 @@ export const useSubmitStore = create<SubmitState>((set) => ({
 	addCodeSubmit: (groupId, codeSubmit) =>
 		set((state) => {
 			const groupSubmissions = state.submissions[groupId] || [];
-			console.log(state);
 			return {
 				submissions: {
 					...state.submissions,

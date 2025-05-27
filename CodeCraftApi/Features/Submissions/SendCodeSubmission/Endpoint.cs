@@ -34,21 +34,30 @@ internal sealed class Endpoint(IAppDbContext dbContext) : Endpoint<CodeSubmissio
 
 		var group = await Data.GetGroup(dbContext, r.SubmittedBy);
 		var step = await Data.GetExerciseStep(dbContext, r.ExerciseStep);
-		var dbResult = await Data.SaveCodeSubmission(dbContext, submission, group, step);
 
-		await new CodeSubmittedEvent
-		(
-			group.Id,
-			group.Name,
-			step.Title,
-			submission.Result,
-			compilerResult.Keys.First(),
-			dbResult.SubmitDate
-		).PublishAsync(cancellation: c);
+		if (step == null)
+		{
+			await SendNotFoundAsync(c);
+		}
+		else
+		{
+			var dbResult = await Data.SaveCodeSubmission(dbContext, submission, group, step);
 
-		await SendAsync(new CodeSubmissionResponse { Result = compilerResult.Values.First(), isSuccess = compilerResult.Keys.First() });
+			await new CodeSubmittedEvent
+			(
+				group.Id,
+				group.Name,
+				step.Title,
+				submission.Result,
+				compilerResult.Keys.First(),
+				dbResult.SubmitDate
+			).PublishAsync(cancellation: c);
+
+			await SendAsync(new CodeSubmissionResponse { Result = compilerResult.Values.First(), isSuccess = compilerResult.Keys.First() });
+		}
+
 	}
-	
+
 	/// <summary>
 	/// Processes the code submission by compiling and running the code.
 	/// </summary>

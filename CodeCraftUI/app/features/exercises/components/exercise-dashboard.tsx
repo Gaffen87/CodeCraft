@@ -1,7 +1,5 @@
 import { Button } from "~/components/ui/button";
 import { NavLink } from "react-router";
-import { IoCreateSharp, IoReload } from "react-icons/io5";
-import { MdPageview } from "react-icons/md";
 
 export default function ExerciseDashboard() {
 	return (
@@ -21,7 +19,7 @@ export default function ExerciseDashboard() {
 				</NavLink>
 			</div>
 			<div>
-				<NavLink to="/exercises">
+				<NavLink to="/exercises/view">
 					<Button className="flex flex-col items-center h-15">
 						View Exercises
 					</Button>
