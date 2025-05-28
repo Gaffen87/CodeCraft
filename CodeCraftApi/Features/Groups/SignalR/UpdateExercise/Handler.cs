@@ -1,11 +1,11 @@
-﻿using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 using CodeCraftApi.SignalR;
 using Microsoft.AspNetCore.SignalR;
 using SignalR.PepR;
 
 namespace CodeCraftApi.Features.Groups.SignalR.UpdateExercise;
 
-internal sealed class UpdateExerciseHandler(IHubContext<AppHub> hub, AppDbContext dbContext) : HubMethodHandler<UpdateExercisePayload>
+internal sealed class UpdateExerciseHandler(IHubContext<AppHub> hub, IAppDbContext dbContext) : HubMethodHandler<UpdateExercisePayload>
 {
 	protected override async Task HandleAsync(HubCallerContext context, UpdateExercisePayload payload)
 	{

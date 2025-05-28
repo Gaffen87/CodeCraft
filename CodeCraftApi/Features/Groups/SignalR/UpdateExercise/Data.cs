@@ -1,11 +1,11 @@
-﻿using CodeCraftApi.Database;
+﻿using CodeCraftApi.Features.DbAbstraction;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeCraftApi.Features.Groups.SignalR.UpdateExercise;
 
 internal sealed class Data
 {
-	public static async Task<string?> GetExerciseTitle(AppDbContext context, Guid stepId)
+	public static async Task<string?> GetExerciseTitle(IAppDbContext context, Guid stepId)
 	{
 		var exercise = await context.Exercises
 			.Where(x => x.SubExercises.Any(sub => sub.Steps.Any(step => step.Id == stepId)))
@@ -14,14 +14,14 @@ internal sealed class Data
 		return exercise?.Title ?? string.Empty;
 	}
 
-	public static async Task<int?> GetExerciseItemNumber(AppDbContext context, Guid stepId)
+	public static async Task<int?> GetExerciseItemNumber(IAppDbContext context, Guid stepId)
 	{
 		var exerciseItem = await context.ExerciseItem.Where(x => x.Steps.Any(x => x.Id == stepId)).FirstOrDefaultAsync();
 
 		return exerciseItem?.Number;
 	}
 
-	public static async Task<int?> GetStepIndex(AppDbContext context, Guid stepId)
+	public static async Task<int?> GetStepIndex(IAppDbContext context, Guid stepId)
 	{
 		var exerciseItem = await context.ExerciseItem.Include(x => x.Steps).Where(x => x.Steps.Any(x => x.Id == stepId)).FirstOrDefaultAsync();
 
