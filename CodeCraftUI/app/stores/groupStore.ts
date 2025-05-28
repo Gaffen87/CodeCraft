@@ -12,13 +12,26 @@ type GroupState = {
 	addMember: (groupId: string, user: User) => void;
 	removeMember: (groupId: string, userId: string) => void;
 	clearMember: (userId: string) => void;
+	setGroupExercise: (groupId: string, newExerciseInfo: { exerciseTitle: string, subExerciseNumber: number, stepIndex: number } | null) => void;
 };
 
 export const useGroupStore = create<GroupState>()(
 	persist(
 		(set, get) => ({
 			groups: [],
-			setGroups: (groups) => set({ groups }),
+			setGroups: (groups) =>
+				set((state) => {
+					const newGroupIds = new Set(groups.map((g) => g.id));
+					const filteredGroups = state.groups.filter((group) => newGroupIds.has(group.id));
+					const mergedGroups = groups.map((newGroup) => {
+						const existing = filteredGroups.find((g) => g.id === newGroup.id);
+						if (existing && existing.exerciseInfo != null) {
+							return { ...newGroup, exerciseInfo: existing.exerciseInfo };
+						}
+						return newGroup;
+					});
+					return { groups: mergedGroups };
+				}),
 			getGroupId: (groupName) => {
 				const group = get().groups.find((group) => group.name === groupName);
 				if (group) {
@@ -93,6 +106,20 @@ export const useGroupStore = create<GroupState>()(
 						groups: updatedGroups,
 					};
 				}),
+				setGroupExercise: (groupId, newExerciseInfo) => {
+					set((state) => {
+						const updatedGroups = state.groups.map((group) => {
+							if (group.id !== groupId) return group;
+							return {
+								...group,
+								exerciseInfo: newExerciseInfo,
+							};
+						})
+						return {
+							groups: updatedGroups,
+						};
+					})
+				}
 		}),
 		{
 			name: "group-store",

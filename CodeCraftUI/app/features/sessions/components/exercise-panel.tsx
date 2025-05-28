@@ -27,14 +27,23 @@ import {
 	SelectValue,
 } from "~/components/ui/select";
 import { useStepStore } from "~/stores/stepStore";
+import useSignalR from "~/hooks/useSignalR";
 
-export default function ExercisePanel({ className }: { className?: string }) {
+export default function ExercisePanel({
+	className,
+	groupId,
+}: {
+	className?: string;
+	groupId: string;
+}) {
 	const { setSelectedStep } = useStepStore();
 	const { getExercises, getExerciseById } = useExercise();
 	const [exercises, setExercises] = useState<any[]>([]);
 	const [selectedExercise, setSelectedExercise] = useState<any>(null);
 	const [open, setOpen] = useState(false);
 	const [value, setValue] = useState("");
+	const { connection } = useSignalR();
+	const [steps, setSteps] = useState<any[]>([]);
 
 	const handleExerciseSelect = async (exerciseId: string) => {
 		const exercise = await getExerciseById(exerciseId);
@@ -116,13 +125,19 @@ export default function ExercisePanel({ className }: { className?: string }) {
 						<div className="mt-4 flex items-center justify-center">
 							<Tabs>
 								<TabsList>
-									<Select>
+									<Select
+										onValueChange={(value) => {
+											const subExercise = selectedExercise.subExercises.find(
+												(sub: any) => sub.title === value
+											);
+											setSteps(subExercise.steps.slice().reverse());
+										}}
+									>
 										<SelectTrigger className="w-[200px]">
 											<SelectValue placeholder="Select a sub exercise" />
 										</SelectTrigger>
 										<SelectContent>
 											{selectedExercise.subExercises
-												.slice()
 												.sort((a: any, b: any) => a.number - b.number)
 												.map((sub: any) => (
 													<TabsTrigger value={sub.title} key={sub.id} asChild>
@@ -139,43 +154,49 @@ export default function ExercisePanel({ className }: { className?: string }) {
 										<div className="p-4">
 											<h3 className="text-lg font-semibold">{sub.title}</h3>
 											<>
-												<Tabs
-													onValueChange={(value) => {
-														const step = sub.steps.find(
-															(step: any) => step.title === value
-														);
-														if (step) {
-															setSelectedStep(step.id);
-														}
-													}}
-												>
+												<Tabs>
 													<TabsList>
-														<Select>
+														<Select
+															onValueChange={(value) => {
+																const step = sub.steps.find(
+																	(step: any) => step.title === value
+																);
+																if (step) {
+																	setSelectedStep(step.id);
+																}
+																connection?.invoke(
+																	"InvokeMethod",
+																	"UpdateExercise",
+																	{
+																		groupId,
+																		exerciseStepId: step.id,
+																	}
+																);
+															}}
+														>
 															<SelectTrigger className="w-[200px]">
 																<SelectValue placeholder="Select a step" />
 															</SelectTrigger>
 															<SelectContent>
-																{sub.steps
-																	.reverse()
-																	.map((step: any, index: any) => (
-																		<TabsTrigger
-																			value={step.title}
-																			key={step.id}
-																			asChild
-																		>
-																			<SelectItem value={step.title}>
-																				{sub.number}.{index} - {step.title}
-																			</SelectItem>
-																		</TabsTrigger>
-																	))}
+																{steps.map((step: any, index: any) => (
+																	<TabsTrigger
+																		value={step.title}
+																		key={step.id}
+																		asChild
+																	>
+																		<SelectItem value={step.title}>
+																			{sub.number}.{index + 1} - {step.title}
+																		</SelectItem>
+																	</TabsTrigger>
+																))}
 															</SelectContent>
 														</Select>
 													</TabsList>
-													{sub.steps.reverse().map((step: any, index: any) => (
+													{steps.map((step: any, index: any) => (
 														<TabsContent key={step.title} value={step.title}>
 															<div className="p-4">
 																<h4 className="text-md font-semibold mb-2">
-																	{sub.number}.{index} - {step.title}
+																	{sub.number}.{index + 1} - {step.title}
 																</h4>
 																<p className="text-sm text-gray-600">
 																	{step.description}

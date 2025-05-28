@@ -29,7 +29,10 @@ export default function GroupRoom({ groupId }: { groupId: string }) {
 			<Header groups={groups} groupId={groupId} />
 			<div className="flex h-full w-full">
 				<div className="w-1/4 h-full">
-					<ExercisePanel className="w-full h-full p-2 bg-secondary" />
+					<ExercisePanel
+						className="w-full h-full p-2 bg-secondary"
+						groupId={groupId}
+					/>
 				</div>
 				<div className="w-3/4 h-full">
 					<Editor className="h-3/5 w-full" groupName={getGroupName(groupId)} />

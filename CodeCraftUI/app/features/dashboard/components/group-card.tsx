@@ -15,8 +15,6 @@ import { useSubmitStore } from "~/stores/submitStore";
 import { useEffect } from "react";
 import SubmissionBadge from "./submission-badge";
 import Member from "./member";
-import { Badge } from "~/components/ui/badge";
-import { Car } from "lucide-react";
 
 export default function GroupCard({ group }: { group: Group }) {
 	const { loading, getSubmissionsByGroup } = useGroups();
@@ -29,7 +27,6 @@ export default function GroupCard({ group }: { group: Group }) {
 		async function fetchSubmissions() {
 			if (group.id) {
 				const submissions = await getSubmissionsByGroup(group.id);
-				console.log("Submissions: ", submissions);
 				setGroupSubmissions(group.id, submissions);
 			}
 		}
@@ -45,10 +42,21 @@ export default function GroupCard({ group }: { group: Group }) {
 				<CardTitle className="text-xl font-semibold text-foreground border-b border-foreground/10 pb-2">
 					{group.name}
 				</CardTitle>
-				<CardDescription className="text-sm text-foreground/80">
-					Working on:
-					<span className="font-mono"> Hello, World! - 1.1</span>
-				</CardDescription>
+				{group.exerciseInfo ? (
+					<CardDescription className="text-sm text-foreground/80">
+						Working on:
+						<span className="font-mono">
+							{" "}
+							{group.exerciseInfo.exerciseTitle} -{" "}
+							{group.exerciseInfo.subExerciseNumber}.
+							{group.exerciseInfo.stepIndex}
+						</span>
+					</CardDescription>
+				) : (
+					<CardDescription className="text-sm text-foreground/80">
+						Not working on anything...
+					</CardDescription>
+				)}
 			</CardHeader>
 			<CardContent className="flex flex-col gap-2">
 				<div className="space-y-1">

@@ -26,7 +26,8 @@ export default function SignalRProvider({
 	const [connection, setConnection] = useState<HubConnection | null>(null);
 	const [isConnected, setIsConnected] = useState(false);
 	const { addMessage } = useMessageStore();
-	const { addGroup, removeGroup, addMember, removeMember } = useGroupStore();
+	const { addGroup, removeGroup, addMember, removeMember, setGroupExercise } =
+		useGroupStore();
 	const { addCodeSubmit } = useSubmitStore();
 	const { session } = useAuth();
 	const navigate = useNavigate();
@@ -75,10 +76,35 @@ export default function SignalRProvider({
 			});
 		});
 
+		newConnection.on(
+			"ReceiveGroupExerciseMessage",
+			(groupId, exerciseTitle, exerciseItemNumber, stepIndex) => {
+				console.log("Received group exercise message:", {
+					groupId,
+					exerciseTitle,
+					exerciseItemNumber,
+					stepIndex,
+				});
+				if (exerciseTitle === null) {
+					setGroupExercise(groupId, null);
+				} else {
+					setGroupExercise(groupId, {
+						exerciseTitle: exerciseTitle,
+						subExerciseNumber: exerciseItemNumber,
+						stepIndex: stepIndex,
+					});
+				}
+			}
+		);
+
 		newConnection.on("ReceiveGroupMessage", (message) => {
-			console.log("Received group message:", message);
 			if (message.type === "created") {
-				addGroup({ id: message.groupId, name: message.groupName, members: [] });
+				addGroup({
+					id: message.groupId,
+					name: message.groupName,
+					members: [],
+					exerciseInfo: null,
+				});
 			}
 			if (message.type === "deleted") {
 				removeGroup(message.groupId);

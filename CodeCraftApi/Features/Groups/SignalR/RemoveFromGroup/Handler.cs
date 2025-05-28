@@ -16,6 +16,5 @@ internal sealed class RemoveFromGroupHandler(IHubContext<AppHub> hub, IAppDbCont
 		await hub.Groups.RemoveFromGroupAsync(context.ConnectionId, payload.GroupName);
 
 		var members = await Data.RemoveUserFromGroup(dbContext, payload.GroupName, context.UserIdentifier!);
-
 	}
 }
