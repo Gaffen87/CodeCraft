@@ -14,6 +14,11 @@ export type Group = {
 	id: string;
 	name: string;
 	members: User[];
+	exerciseInfo: {
+		exerciseTitle: string;
+		subExerciseNumber: number;
+		stepIndex: number;
+	} | null;
 };
 
 export type Message = {
