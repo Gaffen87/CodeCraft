@@ -13,12 +13,12 @@ import AuthProvider from "./contexts/authContext";
 import { ThemeProvider } from "./contexts/themeContext";
 import SignalRProvider from "./contexts/signalrContext";
 import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
-import { ImSpinner3 } from "react-icons/im";
+import logo from "~/assets/codecraft.png";
 
 export function HydrateFallback() {
 	return (
 		<div className="h-screen w-screen flex items-center justify-center">
-			<ImSpinner3 className="animate-spin text-4xl" />
+			<img src={logo} alt="CodeCraft Logo" className="h-1/2" />
 		</div>
 	);
 }

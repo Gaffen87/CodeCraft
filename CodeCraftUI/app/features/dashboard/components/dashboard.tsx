@@ -21,7 +21,7 @@ export default function Dashboard() {
 			<Header />
 
 			{loading ? (
-				<div className="flex justify-center items-center h-[300px] text-gray-600 gap-2">
+				<div className="flex justify-center items-center h-[300px] gap-2">
 					<CgSpinner className="animate-spin text-2xl" />
 					<span className="text-lg">Loading groups...</span>
 				</div>
