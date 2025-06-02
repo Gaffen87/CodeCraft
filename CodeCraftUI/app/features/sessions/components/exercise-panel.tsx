@@ -28,6 +28,7 @@ import {
 } from "~/components/ui/select";
 import { useStepStore } from "~/stores/stepStore";
 import useSignalR from "~/hooks/useSignalR";
+import { Label } from "~/components/ui/label";
 
 export default function ExercisePanel({
 	className,
@@ -44,6 +45,8 @@ export default function ExercisePanel({
 	const [value, setValue] = useState("");
 	const { connection } = useSignalR();
 	const [steps, setSteps] = useState<any[]>([]);
+	const [currentSub, setCurrentSub] = useState<any>(null);
+	const [currentStep, setCurrentStep] = useState<any>(null);
 
 	const handleExerciseSelect = async (exerciseId: string) => {
 		const exercise = await getExerciseById(exerciseId);
@@ -61,13 +64,13 @@ export default function ExercisePanel({
 	return (
 		<Card className={className}>
 			<CardHeader className="flex flex-col items-center justify-between">
-				<CardTitle className="flex items-center justify-between">
+				<CardTitle className="flex items-center justify-between w-full">
 					<Popover open={open} onOpenChange={setOpen}>
-						<PopoverTrigger asChild>
+						<PopoverTrigger asChild className="w-full">
 							<Button
 								variant={"outline"}
 								role="combobox"
-								className="w-[200px] justify-between"
+								className="w-full justify-between"
 							>
 								{value
 									? exercises.find((exercise: any) => exercise.title === value)
@@ -76,7 +79,7 @@ export default function ExercisePanel({
 								<LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 							</Button>
 						</PopoverTrigger>
-						<PopoverContent className="w-[200px] p-0">
+						<PopoverContent className="w-full p-0">
 							<Command>
 								<CommandInput placeholder="Search exercises..." />
 								<CommandList>
@@ -93,6 +96,8 @@ export default function ExercisePanel({
 													} else {
 														setSelectedExercise(null);
 													}
+													setCurrentStep(null);
+													setCurrentSub(null);
 													setOpen(false);
 												}}
 											>
@@ -113,7 +118,7 @@ export default function ExercisePanel({
 					</Popover>
 				</CardTitle>
 			</CardHeader>
-			<CardContent>
+			<CardContent className="flex flex-col items-center justify-center">
 				{selectedExercise ? (
 					<>
 						<div className="text-sm">
@@ -121,95 +126,86 @@ export default function ExercisePanel({
 							<p>{selectedExercise.title}</p>
 							<p className="mt-2">{selectedExercise.summary}</p>
 						</div>
-						<Separator className="my-4" />
-						<div className="mt-4 flex items-center justify-center">
-							<Tabs>
-								<TabsList>
-									<Select
-										onValueChange={(value) => {
-											const subExercise = selectedExercise.subExercises.find(
-												(sub: any) => sub.title === value
-											);
-											setSteps(subExercise.steps.slice().reverse());
-										}}
-									>
-										<SelectTrigger className="w-[200px]">
-											<SelectValue placeholder="Select a sub exercise" />
-										</SelectTrigger>
-										<SelectContent>
-											{selectedExercise.subExercises
-												.sort((a: any, b: any) => a.number - b.number)
-												.map((sub: any) => (
-													<TabsTrigger value={sub.title} key={sub.id} asChild>
-														<SelectItem value={sub.title}>
-															{sub.number + ". " + sub.title}
-														</SelectItem>
-													</TabsTrigger>
-												))}
-										</SelectContent>
-									</Select>
-								</TabsList>
-								{selectedExercise.subExercises.map((sub: any) => (
-									<TabsContent key={sub.id} value={sub.title}>
-										<div className="p-4">
-											<h3 className="text-lg font-semibold">{sub.title}</h3>
-											<>
-												<Tabs>
-													<TabsList>
-														<Select
-															onValueChange={(value) => {
-																const step = sub.steps.find(
-																	(step: any) => step.title === value
-																);
-																if (step) {
-																	setSelectedStep(step.id);
-																}
-																connection?.invoke(
-																	"InvokeMethod",
-																	"UpdateExercise",
-																	{
-																		groupId,
-																		exerciseStepId: step.id,
-																	}
-																);
-															}}
-														>
-															<SelectTrigger className="w-[200px]">
-																<SelectValue placeholder="Select a step" />
-															</SelectTrigger>
-															<SelectContent>
-																{steps.map((step: any, index: any) => (
-																	<TabsTrigger
-																		value={step.title}
-																		key={step.id}
-																		asChild
-																	>
-																		<SelectItem value={step.title}>
-																			{sub.number}.{index + 1} - {step.title}
-																		</SelectItem>
-																	</TabsTrigger>
-																))}
-															</SelectContent>
-														</Select>
-													</TabsList>
-													{steps.map((step: any, index: any) => (
-														<TabsContent key={step.title} value={step.title}>
-															<div className="p-4">
-																<h4 className="text-md font-semibold mb-2">
-																	{sub.number}.{index + 1} - {step.title}
-																</h4>
-																<p className="text-sm text-gray-600">
-																	{step.description}
-																</p>
-															</div>
-														</TabsContent>
-													))}
-												</Tabs>
-											</>
+						<Separator className="my-6" />
+						<div className="flex flex-col h-full w-full">
+							<Label className="text-center">
+								Sub Exercise:
+								<Select
+									onValueChange={(value) => {
+										const subExercise = selectedExercise.subExercises.find(
+											(sub: any) => sub.title === value
+										);
+										setCurrentSub(subExercise);
+										setCurrentStep(null);
+										setSteps(subExercise.steps.slice().reverse());
+									}}
+								>
+									<SelectTrigger className="w-2/3 mx-auto bg-background hover:bg-secondary">
+										<SelectValue placeholder="Select a sub exercise" />
+									</SelectTrigger>
+									<SelectContent>
+										{selectedExercise.subExercises
+											.sort((a: any, b: any) => a.number - b.number)
+											.map((sub: any) => (
+												<SelectItem value={sub.title} key={sub.id}>
+													{sub.number + ". " + sub.title}
+												</SelectItem>
+											))}
+									</SelectContent>
+								</Select>
+							</Label>
+							{currentSub && (
+								<div className="flex flex-col w-full h-full">
+									<div className="flex flex-col items-start w-full h-full">
+										<div className="w-full h-full">
+											<Label className="mt-10 w-full text-center">
+												Exercise Step:
+												<Select
+													onValueChange={(value) => {
+														const step = currentSub.steps.find(
+															(step: any) => step.title === value
+														);
+														setCurrentStep(step);
+														if (step) {
+															setSelectedStep(step.id);
+														}
+														connection?.invoke(
+															"InvokeMethod",
+															"UpdateExercise",
+															{
+																groupId,
+																exerciseStepId: step.id,
+															}
+														);
+													}}
+												>
+													<SelectTrigger className="w-2/3 mx-auto bg-background hover:bg-secondary">
+														<SelectValue placeholder="Select a step" />
+													</SelectTrigger>
+													<SelectContent>
+														{steps.map((step: any, index: any) => (
+															<SelectItem value={step.title} key={step.id}>
+																{currentSub.number}.{index + 1} - {step.title}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+											</Label>
+											<Separator className="my-6" />
+											{steps.map(
+												(step: any, index: any) =>
+													step.title === currentStep?.title && (
+														<div className="w-full h-full" key={step.title}>
+															<p className="text-md text-foreground/70">
+																{step.description}
+															</p>
+														</div>
+													)
+											)}
 										</div>
-									</TabsContent>
-								))}
-							</Tabs>
+									</div>
+								</div>
+							)}
 						</div>
 					</>
 				) : (
