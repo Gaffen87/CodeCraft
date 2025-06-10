@@ -12,8 +12,8 @@ export default function ExerciseDashboard() {
 				</NavLink>
 			</div>
 			<div>
-				<NavLink to="/exercises">
-					<Button className="flex flex-col items-center h-15">
+				<NavLink to="/exercises" className={"cursor-not-allowed"}>
+					<Button className="flex flex-col items-center h-15" disabled>
 						Update Exercise
 					</Button>
 				</NavLink>
