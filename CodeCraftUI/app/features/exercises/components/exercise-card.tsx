@@ -9,6 +9,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "~/components/ui/card";
+import useAuth from "~/hooks/useAuth";
 
 export default function ExerciseCard({
 	setSaved,
@@ -19,6 +20,8 @@ export default function ExerciseCard({
 	exercise: any;
 	setExercises: React.Dispatch<React.SetStateAction<any[]>>;
 }) {
+	const { user } = useAuth();
+
 	return (
 		<Card
 			key={exercise.id}
@@ -36,26 +39,30 @@ export default function ExerciseCard({
 			</CardHeader>
 			<CardFooter className="flex items-center justify-between">
 				<div className="flex items-center gap-2">
-					<Label
-						className={`${
-							exercise.isVisible ? "text-foreground/100" : "text-foreground/50"
-						} hover:cursor-pointer`}
-					>
-						<Switch
-							onCheckedChange={() => {
-								setSaved(false);
-								setExercises((prev) =>
-									prev.map((ex) =>
-										ex.id === exercise.id
-											? { ...ex, isVisible: !ex.isVisible }
-											: ex
-									)
-								);
-							}}
-							defaultChecked={exercise.isVisible}
-						/>
-						{exercise.isVisible ? "Visible" : "Hidden"}
-					</Label>
+					{user?.user_metadata.role === "teacher" && (
+						<Label
+							className={`${
+								exercise.isVisible
+									? "text-foreground/100"
+									: "text-foreground/50"
+							} hover:cursor-pointer`}
+						>
+							<Switch
+								onCheckedChange={() => {
+									setSaved(false);
+									setExercises((prev) =>
+										prev.map((ex) =>
+											ex.id === exercise.id
+												? { ...ex, isVisible: !ex.isVisible }
+												: ex
+										)
+									);
+								}}
+								defaultChecked={exercise.isVisible}
+							/>
+							{exercise.isVisible ? "Visible" : "Hidden"}
+						</Label>
+					)}
 				</div>
 				<NavLink to={"/exercises/details/" + exercise.id}>
 					<Button>Details</Button>
