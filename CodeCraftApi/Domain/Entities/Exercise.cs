@@ -6,6 +6,7 @@ public class Exercise
 {
 	public Guid Id { get; set; }
 	public string Title { get; set; }
+
 	public string Summary { get; set; }
 	public ExerciseDifficulty ExerciseDifficulty { get; set; }
 	public DateTimeOffset CreatedAt { get; set; }
