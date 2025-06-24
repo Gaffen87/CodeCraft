@@ -39,6 +39,7 @@ export default function useExercise() {
 	async function getExercises() {
 		const res = await fetch(import.meta.env.VITE_API_URL + "/exercises", {
 			headers: {
+				"Content-Type": "application/json",
 				Authorization: `Bearer ${session?.access_token}`,
 			},
 		});
