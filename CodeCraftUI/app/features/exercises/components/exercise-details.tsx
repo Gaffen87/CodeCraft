@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
 import type { Route } from "./+types/exercise-details";
 import useExercise from "~/hooks/useExercise";
+import useAuth from "~/hooks/useAuth";
+import { FaCheck } from "react-icons/fa";
+import { ImCross } from "react-icons/im";
 
 export default function ExerciseDetails({ params }: Route.ComponentProps) {
-	const { getExerciseById } = useExercise();
+	const { user } = useAuth();
+	const { getExerciseById, getUserProgress } = useExercise();
 	const { exerciseId } = params;
 	const [exercise, setExercise] = useState<any>(null);
+	const [progress, setProgress] = useState<any>(null);
 
 	useEffect(() => {
 		const fetchExercise = async () => {
@@ -18,10 +23,16 @@ export default function ExerciseDetails({ params }: Route.ComponentProps) {
 				}
 			}
 		};
+		const fetchUserProgress = async () => {
+			const progress = await getUserProgress(user!.id);
+			setProgress(progress);
+			console.log("User progress:", progress);
+		};
 		fetchExercise();
+		fetchUserProgress();
 	}, [exerciseId]);
 
-	if (!exercise) {
+	if (!exercise || !progress) {
 		return (
 			<div className="flex h-full w-full items-center justify-center">
 				<p className="text-muted-foreground text-lg">Loading...</p>
@@ -54,7 +65,20 @@ export default function ExerciseDetails({ params }: Route.ComponentProps) {
 								<h2 className="text-lg font-semibold text-center text-foreground">
 									Sub Exercise {sub.number}
 									<br />
-									<span className="text-muted-foreground">{sub.title}</span>
+									{progress &&
+										sub.steps.every((step: any) =>
+											progress.stepProgress.some(
+												(sp: any) => sp.exerciseStep.id === step.id
+											)
+										) && (
+											<div className="flex items-center justify-center space-x-2 mt-2">
+												<FaCheck className="text-green-500 inline" />
+												<span className="text-green-500 font-semibold">
+													Completed
+												</span>
+											</div>
+										)}
+									<p className="text-muted-foreground">{sub.title}</p>
 								</h2>
 
 								{sub.steps.map((step: any, stepIdx: number) => (
@@ -62,6 +86,26 @@ export default function ExerciseDetails({ params }: Route.ComponentProps) {
 										key={stepIdx}
 										className="bg-background p-4 rounded-lg border space-y-3"
 									>
+										{progress.stepProgress.some(
+											(sp: any) => sp.exerciseStep.id === step.id
+										) && (
+											<div className="flex items-center space-x-2">
+												<FaCheck className="text-green-500" />
+												<span className="text-green-500 font-semibold">
+													Completed
+												</span>
+											</div>
+										)}
+										{!progress.stepProgress.some(
+											(sp: any) => sp.exerciseStep.id === step.id
+										) && (
+											<div className="flex items-center space-x-2">
+												<ImCross className="text-red-500" />
+												<span className="text-red-500 font-semibold">
+													Not Completed
+												</span>
+											</div>
+										)}
 										<h3 className="font-semibold text-primary">
 											Step {stepIdx + 1}: {step.title}
 										</h3>

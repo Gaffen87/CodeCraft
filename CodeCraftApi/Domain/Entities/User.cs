@@ -7,6 +7,8 @@ public class User
 	public Status Status { get; set; }
 	public string UserName { get; set; }
 	public List<Session> Sessions { get; set; } = [];
+	public List<UserExerciseProgress> ExerciseProgress { get; set; } = [];
+	public List<UserStepProgress> StepProgress { get; set; } = [];
 }
 
 public enum Role
@@ -21,3 +23,4 @@ public enum Status
 	Active,
 	Passive
 }
+

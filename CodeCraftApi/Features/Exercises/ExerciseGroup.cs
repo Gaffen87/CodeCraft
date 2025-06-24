@@ -11,7 +11,6 @@ internal sealed class ExerciseGroup : FastEndpoints.Group
 			ep.Description(b =>
 				b.ProducesProblemDetails(401)
 				.ProducesProblemDetails(403));
-			ep.AllowAnonymous();
 		});
 	}
 }

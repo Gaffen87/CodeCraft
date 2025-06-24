@@ -150,10 +150,6 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("AuthorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("author_id");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -186,9 +182,6 @@ namespace CodeCraftApi.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_exercises");
-
-                    b.HasIndex("AuthorId")
-                        .HasDatabaseName("ix_exercises_author_id");
 
                     b.ToTable("exercises", (string)null);
                 });
@@ -397,6 +390,10 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("ExerciseStepId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_step_id");
+
                     b.Property<Guid?>("GroupId")
                         .HasColumnType("uuid")
                         .HasColumnName("group_id");
@@ -417,10 +414,75 @@ namespace CodeCraftApi.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
+                    b.HasIndex("ExerciseStepId")
+                        .HasDatabaseName("ix_users_exercise_step_id");
+
                     b.HasIndex("GroupId")
                         .HasDatabaseName("ix_users_group_id");
 
                     b.ToTable("users", (string)null);
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.UserExerciseProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("completed");
+
+                    b.Property<Guid>("ExerciseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_exercise_progress");
+
+                    b.HasIndex("ExerciseId")
+                        .HasDatabaseName("ix_exercise_progress_exercise_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_exercise_progress_user_id");
+
+                    b.ToTable("exercise_progress", (string)null);
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.UserStepProgress", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("completed");
+
+                    b.Property<Guid>("ExerciseStepId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("exercise_step_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_step_progress");
+
+                    b.HasIndex("ExerciseStepId")
+                        .HasDatabaseName("ix_step_progress_exercise_step_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_step_progress_user_id");
+
+                    b.ToTable("step_progress", (string)null);
                 });
 
             modelBuilder.Entity("CategoryExercise", b =>
@@ -467,16 +529,6 @@ namespace CodeCraftApi.Migrations
                     b.Navigation("ExerciseStep");
 
                     b.Navigation("SubmittedBy");
-                });
-
-            modelBuilder.Entity("CodeCraftApi.Domain.Entities.Exercise", b =>
-                {
-                    b.HasOne("CodeCraftApi.Domain.Entities.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .HasConstraintName("fk_exercises_users_author_id");
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.ExerciseItem", b =>
@@ -530,10 +582,57 @@ namespace CodeCraftApi.Migrations
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>
                 {
+                    b.HasOne("CodeCraftApi.Domain.Entities.ExerciseStep", null)
+                        .WithMany("UserProgress")
+                        .HasForeignKey("ExerciseStepId")
+                        .HasConstraintName("fk_users_exercise_step_exercise_step_id");
+
                     b.HasOne("CodeCraftApi.Domain.Entities.Group", null)
                         .WithMany("Members")
                         .HasForeignKey("GroupId")
                         .HasConstraintName("fk_users_groups_group_id");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.UserExerciseProgress", b =>
+                {
+                    b.HasOne("CodeCraftApi.Domain.Entities.Exercise", "Exercise")
+                        .WithMany()
+                        .HasForeignKey("ExerciseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_exercise_progress_exercises_exercise_id");
+
+                    b.HasOne("CodeCraftApi.Domain.Entities.User", "User")
+                        .WithMany("ExerciseProgress")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_exercise_progress_users_user_id");
+
+                    b.Navigation("Exercise");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.UserStepProgress", b =>
+                {
+                    b.HasOne("CodeCraftApi.Domain.Entities.ExerciseStep", "ExerciseStep")
+                        .WithMany()
+                        .HasForeignKey("ExerciseStepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_step_progress_exercise_step_exercise_step_id");
+
+                    b.HasOne("CodeCraftApi.Domain.Entities.User", "User")
+                        .WithMany("StepProgress")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_step_progress_users_user_id");
+
+                    b.Navigation("ExerciseStep");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeSubmission", b =>
@@ -554,6 +653,8 @@ namespace CodeCraftApi.Migrations
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.ExerciseStep", b =>
                 {
                     b.Navigation("Tests");
+
+                    b.Navigation("UserProgress");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.Group", b =>
@@ -563,7 +664,11 @@ namespace CodeCraftApi.Migrations
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>
                 {
+                    b.Navigation("ExerciseProgress");
+
                     b.Navigation("Sessions");
+
+                    b.Navigation("StepProgress");
                 });
 #pragma warning restore 612, 618
         }

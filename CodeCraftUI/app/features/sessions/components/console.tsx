@@ -10,11 +10,9 @@ export default function Console({ className }: { className?: string }) {
 	const { connection } = useSignalR();
 
 	useEffect(() => {
-		if (connection) {
-			connection.on("ReceiveConsoleMessage", (message) => {
-				setConsole(message);
-			});
-		}
+		connection?.on("ReceiveConsoleMessage", (message) => {
+			setConsole(message);
+		});
 	}, [connection]);
 
 	return (

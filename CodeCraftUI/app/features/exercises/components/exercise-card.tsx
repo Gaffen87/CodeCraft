@@ -10,6 +10,7 @@ import {
 	CardTitle,
 } from "~/components/ui/card";
 import useAuth from "~/hooks/useAuth";
+import { FaEdit } from "react-icons/fa";
 
 export default function ExerciseCard({
 	setSaved,
@@ -31,7 +32,17 @@ export default function ExerciseCard({
 		>
 			<CardHeader className="space-y-1">
 				<CardTitle className="text-xl font-semibold border-b border-gray-200 pb-2">
-					{exercise.title}
+					<div className="flex">
+						{exercise.title}
+						{user?.user_metadata.role === "teacher" && (
+							<NavLink
+								to={"/exercises/edit/" + exercise.id}
+								className="ml-auto text-foreground/80 hover:text-foreground/50 hover:cursor-pointer"
+							>
+								<FaEdit />
+							</NavLink>
+						)}
+					</div>
 				</CardTitle>
 				<CardDescription className="text-sm">
 					{exercise.summary}

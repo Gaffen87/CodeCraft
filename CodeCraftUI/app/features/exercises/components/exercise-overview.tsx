@@ -88,15 +88,30 @@ export default function ExerciseOverview() {
 				</div>
 			</div>
 			<div className="w-full p-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-4">
-				{exercises.length > 0 ? (
-					exercises.map((exercise: any) => (
-						<ExerciseCard
-							key={exercise.id}
-							exercise={exercise}
-							setSaved={setSaved}
-							setExercises={setExercises}
-						/>
-					))
+				{user?.user_metadata.role === "teacher" ? (
+					exercises.length > 0 ? (
+						exercises.map((exercise: any) => (
+							<ExerciseCard
+								key={exercise.id}
+								exercise={exercise}
+								setSaved={setSaved}
+								setExercises={setExercises}
+							/>
+						))
+					) : (
+						<p>No exercises available.</p>
+					)
+				) : exercises.length > 0 ? (
+					exercises
+						.filter((ex: any) => ex.isVisible === true)
+						.map((exercise: any) => (
+							<ExerciseCard
+								key={exercise.id}
+								exercise={exercise}
+								setSaved={setSaved}
+								setExercises={setExercises}
+							/>
+						))
 				) : (
 					<p>No exercises available.</p>
 				)}

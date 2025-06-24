@@ -40,7 +40,6 @@ internal sealed class Data
 
 		existing.Title = exercise.Title;
 		existing.Summary = exercise.Summary;
-		existing.Author = exercise.Author;
 		existing.ExerciseDifficulty = exercise.ExerciseDifficulty;
 		existing.CreatedAt = exercise.CreatedAt;
 		existing.IsDeleted = exercise.IsDeleted;
