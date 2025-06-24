@@ -5,7 +5,6 @@ using System.Runtime.Serialization;
 public class Exercise
 {
 	public Guid Id { get; set; }
-	public User? Author { get; set; }
 	public string Title { get; set; }
 	public string Summary { get; set; }
 	public ExerciseDifficulty ExerciseDifficulty { get; set; }

@@ -30,6 +30,9 @@ public class AppDbContext : DbContext, IAppDbContext
 
 		modelBuilder.Entity<Test>().Property(x => x.Content).HasColumnType("jsonb");
 	}
+
+	public DbSet<UserExerciseProgress> ExerciseProgress { get; set; }
+	public DbSet<UserStepProgress> StepProgress { get; set; }
 	/// <summary>
 	/// DbSet for the Exercise entity.
 	/// </summary>

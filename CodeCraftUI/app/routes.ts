@@ -18,6 +18,7 @@ export default [
 					"details/:exerciseId",
 					"./features/exercises/components/exercise-details.tsx"
 				),
+				route("edit/:exerciseId", "./features/exercises/components/exercise-update-form.tsx")
 			]),
 		]),
 	]),

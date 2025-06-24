@@ -18,6 +18,8 @@ public interface IAppDbContext
 	DbSet<User> Users { get; set; }
 	DbSet<CodeSubmission> Submissions { get; set; }
 	DbSet<CodeFile> CodeFiles { get; set; }
+	DbSet<UserExerciseProgress> ExerciseProgress { get; set; }
+	DbSet<UserStepProgress> StepProgress { get; set; }
 	/// <summary>
 	/// Saves all changes made in this context to the database asynchronously.
 	/// </summary>

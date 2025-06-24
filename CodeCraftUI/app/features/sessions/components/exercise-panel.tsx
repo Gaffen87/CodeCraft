@@ -13,7 +13,6 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "~/components/ui/popover";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { useEffect, useState } from "react";
 import { LuChevronsUpDown } from "react-icons/lu";
 import { FaCheck } from "react-icons/fa6";
@@ -29,6 +28,7 @@ import {
 import { useStepStore } from "~/stores/stepStore";
 import useSignalR from "~/hooks/useSignalR";
 import { Label } from "~/components/ui/label";
+import useAuth from "~/hooks/useAuth";
 
 export default function ExercisePanel({
 	className,
@@ -37,8 +37,9 @@ export default function ExercisePanel({
 	className?: string;
 	groupId: string;
 }) {
+	const { user } = useAuth();
 	const { setSelectedStep } = useStepStore();
-	const { getExercises, getExerciseById } = useExercise();
+	const { getExercises, getExerciseById, getUserProgress } = useExercise();
 	const [exercises, setExercises] = useState<any[]>([]);
 	const [selectedExercise, setSelectedExercise] = useState<any>(null);
 	const [open, setOpen] = useState(false);
@@ -47,6 +48,7 @@ export default function ExercisePanel({
 	const [steps, setSteps] = useState<any[]>([]);
 	const [currentSub, setCurrentSub] = useState<any>(null);
 	const [currentStep, setCurrentStep] = useState<any>(null);
+	const [progress, setProgress] = useState<any>(null);
 
 	const handleExerciseSelect = async (exerciseId: string) => {
 		const exercise = await getExerciseById(exerciseId);
@@ -57,6 +59,8 @@ export default function ExercisePanel({
 		const fetchExercises = async () => {
 			const data = await getExercises();
 			setExercises(data.exercises.filter((ex: any) => ex.isVisible));
+			const userProgress = await getUserProgress(user!.id);
+			setProgress(userProgress);
 		};
 		fetchExercises();
 	}, []);
@@ -102,6 +106,36 @@ export default function ExercisePanel({
 												}}
 											>
 												{exercise.title}
+												{progress?.exerciseProgress.some(
+													(ep: any) => ep.exercise.id === exercise.id
+												) ? (
+													<span className="text-green-500 text-xs ml-2">
+														Completed!
+													</span>
+												) : (
+													<span className="text-xs ml-1 text-foreground/50">
+														{(() => {
+															const subExercises = exercise.subExercises || [];
+															const allSteps = subExercises.flatMap(
+																(sub: any) => sub.steps || []
+															);
+															const completedSteps = allSteps.filter(
+																(step: any) =>
+																	progress?.stepProgress.some(
+																		(sp: any) => sp.exerciseStep.id === step.id
+																	)
+															).length;
+															const totalSteps = allSteps.length;
+															if (totalSteps === 0 || completedSteps === 0) {
+																return "Not started";
+															}
+															const percent = Math.round(
+																(completedSteps / totalSteps) * 100
+															);
+															return `In progress: ${percent}%`;
+														})()}
+													</span>
+												)}
 												<FaCheck
 													className={`ml-auto ${
 														value === exercise.title
@@ -149,6 +183,15 @@ export default function ExercisePanel({
 											.map((sub: any) => (
 												<SelectItem value={sub.title} key={sub.id}>
 													{sub.number + ". " + sub.title}
+													{sub.steps.every((step: any) =>
+														progress?.stepProgress.some(
+															(sp: any) => sp.exerciseStep.id === step.id
+														)
+													) && (
+														<span className="text-green-500 text-xs ml-2">
+															Completed!
+														</span>
+													)}
 												</SelectItem>
 											))}
 									</SelectContent>
@@ -186,6 +229,13 @@ export default function ExercisePanel({
 														{steps.map((step: any, index: any) => (
 															<SelectItem value={step.title} key={step.id}>
 																{currentSub.number}.{index + 1} - {step.title}
+																{progress?.stepProgress.some(
+																	(sp: any) => sp.exerciseStep.id === step.id
+																) && (
+																	<span className="text-green-500 text-xs">
+																		Solved!
+																	</span>
+																)}
 															</SelectItem>
 														))}
 													</SelectContent>

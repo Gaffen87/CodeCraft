@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace CodeCraftApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250424182634_refactortablesubmissions")]
-    partial class refactortablesubmissions
+    [Migration("20250620121739_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace CodeCraftApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "exercise_difficulty", new[] { "easy", "hard", "medium", "unassigned" });
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "group_size", new[] { "group", "pair", "team" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "progress", new[] { "completed", "not_started", "ongoing" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "role", new[] { "student", "teacher", "unassigned" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "session_status", new[] { "active", "passive", "reconnecting" });
             NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "status", new[] { "active", "passive" });
@@ -154,10 +154,6 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("AuthorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("author_id");
-
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -169,6 +165,10 @@ namespace CodeCraftApi.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
+
+                    b.Property<bool>("IsVisible")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_visible");
 
                     b.Property<string>("Summary")
                         .IsRequired()
@@ -186,9 +186,6 @@ namespace CodeCraftApi.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_exercises");
-
-                    b.HasIndex("AuthorId")
-                        .HasDatabaseName("ix_exercises_author_id");
 
                     b.ToTable("exercises", (string)null);
                 });
@@ -229,10 +226,10 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Contraints")
+                    b.Property<string>("Constraints")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("contraints");
+                        .HasColumnName("constraints");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -397,6 +394,10 @@ namespace CodeCraftApi.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("GroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("group_id");
+
                     b.Property<Role>("Role")
                         .HasColumnType("role")
                         .HasColumnName("role");
@@ -413,26 +414,54 @@ namespace CodeCraftApi.Migrations
                     b.HasKey("Id")
                         .HasName("pk_users");
 
+                    b.HasIndex("GroupId")
+                        .HasDatabaseName("ix_users_group_id");
+
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("GroupUser", b =>
+            modelBuilder.Entity("user_exercise_progress", b =>
                 {
-                    b.Property<Guid>("GroupsId")
+                    b.Property<Guid>("ExerciseProgressId")
                         .HasColumnType("uuid")
-                        .HasColumnName("groups_id");
+                        .HasColumnName("exercise_progress_id");
 
-                    b.Property<Guid>("MembersId")
+                    b.Property<Guid>("UserProgressId")
                         .HasColumnType("uuid")
-                        .HasColumnName("members_id");
+                        .HasColumnName("user_progress_id");
 
-                    b.HasKey("GroupsId", "MembersId")
-                        .HasName("pk_group_user");
+                    
 
-                    b.HasIndex("MembersId")
-                        .HasDatabaseName("ix_group_user_members_id");
+                    b.HasKey("ExerciseProgressId", "UserProgressId")
+                        .HasName("pk_user_exercise_progress");
 
-                    b.ToTable("group_user", (string)null);
+                    b.HasIndex("UserProgressId")
+                        .HasDatabaseName("ix_user_exercise_progress_user_progress_id");
+
+                    b.ToTable("user_exercise_progress", (string)null);
+                });
+
+            modelBuilder.Entity("user_step_progress", b =>
+                {
+                    b.Property<Guid>("StepProgressId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("step_progress_id");
+
+                    b.Property<Guid>("UserProgressId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_progress_id");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("completed");
+
+                    b.HasKey("StepProgressId", "UserProgressId")
+                        .HasName("pk_user_step_progress");
+
+                    b.HasIndex("UserProgressId")
+                        .HasDatabaseName("ix_user_step_progress_user_progress_id");
+
+                    b.ToTable("user_step_progress", (string)null);
                 });
 
             modelBuilder.Entity("CategoryExercise", b =>
@@ -479,16 +508,6 @@ namespace CodeCraftApi.Migrations
                     b.Navigation("ExerciseStep");
 
                     b.Navigation("SubmittedBy");
-                });
-
-            modelBuilder.Entity("CodeCraftApi.Domain.Entities.Exercise", b =>
-                {
-                    b.HasOne("CodeCraftApi.Domain.Entities.User", "Author")
-                        .WithMany()
-                        .HasForeignKey("AuthorId")
-                        .HasConstraintName("fk_exercises_users_author_id");
-
-                    b.Navigation("Author");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.ExerciseItem", b =>
@@ -540,21 +559,46 @@ namespace CodeCraftApi.Migrations
                         .HasConstraintName("fk_tests_exercise_step_exercise_step_id");
                 });
 
-            modelBuilder.Entity("GroupUser", b =>
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>
                 {
                     b.HasOne("CodeCraftApi.Domain.Entities.Group", null)
+                        .WithMany("Members")
+                        .HasForeignKey("GroupId")
+                        .HasConstraintName("fk_users_groups_group_id");
+                });
+
+            modelBuilder.Entity("user_exercise_progress", b =>
+                {
+                    b.HasOne("CodeCraftApi.Domain.Entities.Exercise", null)
                         .WithMany()
-                        .HasForeignKey("GroupsId")
+                        .HasForeignKey("ExerciseProgressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_group_user_groups_groups_id");
+                        .HasConstraintName("fk_user_exercise_progress_exercises_exercise_progress_id");
 
                     b.HasOne("CodeCraftApi.Domain.Entities.User", null)
                         .WithMany()
-                        .HasForeignKey("MembersId")
+                        .HasForeignKey("UserProgressId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_group_user_users_members_id");
+                        .HasConstraintName("fk_user_exercise_progress_users_user_progress_id");
+                });
+
+            modelBuilder.Entity("user_step_progress", b =>
+                {
+                    b.HasOne("CodeCraftApi.Domain.Entities.ExerciseStep", null)
+                        .WithMany()
+                        .HasForeignKey("StepProgressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_step_progress_exercise_step_step_progress_id");
+
+                    b.HasOne("CodeCraftApi.Domain.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserProgressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_step_progress_users_user_progress_id");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.CodeSubmission", b =>
@@ -575,6 +619,11 @@ namespace CodeCraftApi.Migrations
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.ExerciseStep", b =>
                 {
                     b.Navigation("Tests");
+                });
+
+            modelBuilder.Entity("CodeCraftApi.Domain.Entities.Group", b =>
+                {
+                    b.Navigation("Members");
                 });
 
             modelBuilder.Entity("CodeCraftApi.Domain.Entities.User", b =>

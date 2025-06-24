@@ -16,6 +16,7 @@ internal sealed class GetExerciseEndpoint(IAppDbContext context) : Endpoint<GetE
 		Group<ExerciseGroup>();
 		Description(x => x.WithName("GetExercise"));
 		Summary(new Summary());
+		Roles("teacher", "student");
 	}
 	/// <summary>
 	/// Handles the request to retrieve an exercise by its ID.

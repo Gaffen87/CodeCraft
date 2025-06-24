@@ -14,6 +14,7 @@ internal sealed class UpdateExerciseEndpoint(IAppDbContext context) : Endpoint<U
 	{
 		Put("/{ExerciseId}");
 		Group<ExerciseGroup>();
+		Roles("teacher");
 		//TODO: Summary
 	}
 	/// <summary>

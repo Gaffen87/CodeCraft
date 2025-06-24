@@ -74,9 +74,9 @@ internal sealed class UpdateExerciseStep
 	public string Title { get; set; }
 	public string Description { get; set; }
 	public string DescriptionShort { get; set; }
-	public string Contraints { get; set; }
-	public string Hints { get; set; }
-	public List<UpdateTestItem> Tests { get; set; }
+	public string Contraints { get; set; } = "";
+	public string Hints { get; set; } = "";
+	public List<UpdateTestItem> Tests { get; set; } = [];
 
 	internal sealed class Validator : Validator<UpdateExerciseStep>
 	{

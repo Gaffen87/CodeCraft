@@ -35,6 +35,11 @@ internal sealed class Endpoint(IAppDbContext dbContext) : Endpoint<CodeSubmissio
 		var group = await Data.GetGroup(dbContext, r.SubmittedBy);
 		var step = await Data.GetExerciseStep(dbContext, r.ExerciseStep);
 
+		if (submission.IsSuccess)
+		{
+			await Data.SetStepAsCompleted(dbContext, step, group.Members);
+		}
+
 		if (step == null)
 		{
 			await SendNotFoundAsync(c);

@@ -26,6 +26,7 @@ export default function useGroups() {
 					};
 				});
 				setGroups(groups);
+				console.log("Fetched groups:", groups);
 			}
 		} catch (err) {
 			console.error("Failed to fetch groups:", err);

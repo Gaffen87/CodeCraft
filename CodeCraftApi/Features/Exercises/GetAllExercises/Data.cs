@@ -8,6 +8,6 @@ internal sealed class Data
 {
 	public async static Task<List<Exercise>> GetExercises(IAppDbContext context)
 	{
-		return await context.Exercises.ToListAsync();
+		return await context.Exercises.Include(x => x.SubExercises).ThenInclude(x => x.Steps).ToListAsync();
 	}
 }

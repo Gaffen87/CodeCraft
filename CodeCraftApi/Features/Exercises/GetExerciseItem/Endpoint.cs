@@ -19,6 +19,7 @@ internal sealed class GetExerciseItemEndpoint(IAppDbContext context)
 		Group<ExerciseGroup>();
 		Description(x => x.WithName("Get Exercise Item"));
 		Summary(new Summary());
+		Roles("student", "teacher");
 	}
 	/// <summary>
 	/// Håndterer HTTP-anmodningen og returnerer en <see cref="GetExerciseItemResponse"/> 

@@ -15,6 +15,7 @@ internal sealed class CreateExerciseEndpoint(IAppDbContext context) : Endpoint<C
 		Post("");
 		Group<ExerciseGroup>();
 		Summary(new Summary());
+		Roles("teacher");
 	}
 	/// <summary>
 	/// Handles the request to create a new exercise.

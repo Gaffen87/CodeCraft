@@ -45,7 +45,7 @@ namespace CodeCraftApi
 				);
 
 			builder.Services
-				.AddAuthenticationJwtBearer(s => s.SigningKey = "EgliLoHLLxgdxLBuUH9thsIhkKjA4ieaUm0THxZA4a2yySKW2pYKNbl9mGpHkm1u7KE1UtHmmmtQQdwgPWBRjw==",
+				.AddAuthenticationJwtBearer(s => s.SigningKey = builder.Configuration.GetSection("SigningKey").Value,
 				options => options.Events = new JwtBearerEvents
 				{
 					OnMessageReceived = context =>

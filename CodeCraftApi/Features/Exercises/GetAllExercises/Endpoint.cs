@@ -8,6 +8,7 @@ internal sealed class Endpoint(IAppDbContext context) : EndpointWithoutRequest<R
 	{
 		Get("");
 		Group<ExerciseGroup>();
+		Roles("teacher", "student");
 	}
 
 	public override async Task HandleAsync(CancellationToken c)
